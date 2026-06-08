@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Initiative Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#D01C1C;--red-dark:#A01515;--red-light:#FBEAEA;
+  --black:#1A1A1A;--gray:#2C2C2C;--mid:#6B6B6B;
+  --border:#E0E0E0;--bg:#F4F4F4;--white:#fff;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--black);font-size:14px}
+
+/* topbar */
+.topbar{background:var(--black);color:#fff;padding:9px 20px;display:flex;align-items:center;gap:10px}
+.cross{width:22px;height:22px;background:var(--red);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cross svg{width:12px;height:12px;fill:#fff}
+.topbar-title{font-size:13px;font-weight:500;letter-spacing:.02em}
+.topbar-sub{font-size:11px;color:#888;margin-left:auto}
+
+/* page header */
+.page-header{background:var(--red);padding:18px 22px 16px;border-bottom:4px solid var(--red-dark);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.page-header-left h1{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.page-header-left p{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.wave-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;transition:background .15s}
+.wave-btn:hover{background:rgba(255,255,255,.28)}
+.add-dept-btn{background:#fff;border:none;color:var(--red);padding:5px 13px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;transition:background .15s}
+.add-dept-btn:hover{background:#f0f0f0}
+
+/* dashboard panel */
+.dash-panel{background:#fff;border-bottom:1px solid var(--border);padding:16px 22px 14px}
+.dash-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.kpi-card{background:#F7F7F7;border-radius:4px;padding:11px 13px;border-left:3px solid transparent}
+.kpi-card.kc-total{border-left-color:#1A1A1A}
+.kpi-card.kc-active{border-left-color:#16A34A}
+.kpi-card.kc-inprog{border-left-color:#D97706}
+.kpi-card.kc-planned{border-left-color:#6B7280}
+.kpi-card.kc-complete{border-left-color:#0369A1}
+.kpi-card.kc-depts{border-left-color:#D01C1C}
+.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-bottom:5px}
+.kpi-value{font-size:24px;font-weight:700;color:var(--black);line-height:1}
+.kpi-sub{font-size:10px;color:var(--mid);margin-top:3px}
+.dash-bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dash-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);margin-bottom:8px}
+.progress-rows{display:flex;flex-direction:column;gap:7px}
+.prog-row{display:flex;align-items:center;gap:8px}
+.prog-label{font-size:11px;color:var(--gray);width:74px;flex-shrink:0}
+.prog-track{flex:1;height:6px;background:#EBEBEB;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .3s}
+.pf-active{background:#16A34A}
+.pf-inprog{background:#D97706}
+.pf-planned{background:#9CA3AF}
+.pf-complete{background:#0369A1}
+.prog-count{font-size:11px;font-weight:600;color:var(--black);width:20px;text-align:right;flex-shrink:0}
+.prog-pct{font-size:10px;color:var(--mid);width:30px;text-align:right;flex-shrink:0}
+.wave-rows{display:flex;flex-direction:column;gap:6px}
+.wave-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:#F7F7F7;border-radius:4px;border-left:3px solid transparent}
+.wave-row.wr-pilot{border-left-color:#1A1A1A}
+.wave-row.wr-w2{border-left-color:#D01C1C}
+.wave-row.wr-w3{border-left-color:#FBEAEA;border-left-color:#E8A0A0}
+.wave-row-name{font-size:12px;font-weight:600;color:var(--black)}
+.wave-row-meta{font-size:11px;color:var(--mid)}
+.wave-stats{display:flex;gap:10px}
+.wave-stat{text-align:center}
+.wave-stat-n{font-size:13px;font-weight:700;color:var(--black);display:block}
+.wave-stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--mid)}
+
+/* content */
+.content{padding:14px 22px;display:flex;flex-direction:column;gap:10px}
+
+/* dept card */
+.dept-card{background:#fff;border:1px solid var(--border);border-radius:5px;overflow:visible}
+.dept-hdr{padding:12px 14px;display:flex;align-items:center;gap:10px;border-left:4px solid var(--red)}
+.dept-hdr-click{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;user-select:none}
+.dept-hdr-click:hover .dept-name{color:var(--red)}
+.abbr{width:34px;height:34px;background:var(--red);color:#fff;border-radius:4px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.03em}
+.dept-info{flex:1}
+.dept-name{font-size:14px;font-weight:600;transition:color .1s}
+.dept-wave{font-size:11px;color:#999;font-weight:400}
+.dept-roles{font-size:11px;color:var(--mid);margin-top:2px}
+.dept-roles b{color:var(--gray);font-weight:500}
+.dept-meta{display:flex;align-items:center;gap:8px}
+.count-badge{font-size:10px;background:var(--red-light);color:var(--red-dark);padding:2px 7px;border-radius:3px;font-weight:700}
+.chevron{color:var(--mid);font-size:16px;line-height:1;transition:transform .2s;font-style:normal;display:inline-block}
+.dept-card.open .chevron{transform:rotate(180deg)}
+
+/* dept action buttons */
+.dept-actions{display:flex;gap:4px;align-items:center;margin-left:6px}
+.icon-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:4px 7px;cursor:pointer;font-size:12px;color:var(--mid);font-family:inherit;transition:all .15s;line-height:1}
+.icon-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.icon-btn.del:hover{border-color:#B91C1C;color:#B91C1C;background:#FEE2E2}
+
+/* dept body */
+.dept-body{display:none;border-top:1px solid var(--border)}
+.dept-card.open .dept-body{display:block}
+
+/* initiative rows */
+.ini-row{padding:9px 14px 9px 52px;border-bottom:1px solid #F2F2F2;display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;align-items:center}
+.ini-row:last-of-type{border-bottom:none}
+.ini-title{font-size:13px;font-weight:500}
+.ini-desc{font-size:11px;color:var(--mid);margin-top:2px}
+.ini-leader{font-size:11px;color:var(--mid);white-space:nowrap}
+.ini-due{font-size:11px;color:var(--mid);white-space:nowrap}
+.badge{font-size:10px;font-weight:700;padding:3px 7px;border-radius:3px;white-space:nowrap}
+.b-active{background:#DCFCE7;color:#15803D}
+.b-inprog{background:#FEF9C3;color:#854D0E}
+.b-planned{background:#F3F4F6;color:#4B5563}
+.b-complete{background:#E5E7EB;color:#374151}
+.clip{font-size:12px;color:var(--mid)}
+.ini-row-actions{display:flex;gap:3px}
+.ini-empty{padding:10px 14px 10px 52px;font-size:11px;color:#AAA;font-style:italic}
+
+/* add bar */
+.add-bar{padding:9px 14px 9px 52px;background:#FAFAFA;border-top:1px dashed var(--border)}
+.add-btn{background:none;border:1.5px dashed var(--border);border-radius:4px;padding:5px 11px;font-size:12px;color:var(--mid);cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:inherit}
+.add-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+
+/* confirm delete banner */
+.del-confirm{background:#FEF2F2;border:1px solid #FECACA;border-radius:4px;padding:10px 14px;margin:0 14px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#991B1B}
+.del-confirm-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-del-yes{background:#B91C1C;border:none;color:#fff;padding:5px 12px;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-del-yes:hover{background:#991B1B}
+.btn-del-no{background:none;border:1px solid #FECACA;color:#991B1B;padding:5px 10px;border-radius:3px;font-size:11px;cursor:pointer;font-family:inherit}
+.btn-del-no:hover{background:#FEE2E2}
+
+/* overlay + modals */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:#fff;border-radius:6px;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal-hdr{background:var(--red);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:6px 6px 0 0;position:sticky;top:0;z-index:5}
+.modal-hdr.dark-hdr{background:var(--black)}
+.modal-hdr h3{color:#fff;font-size:14px;font-weight:600}
+.modal-x{background:none;border:none;color:rgba(255,255,255,.8);font-size:22px;cursor:pointer;line-height:1;font-family:inherit}
+.modal-x:hover{color:#fff}
+.modal-dept{background:#F7F7F7;border-bottom:1px solid var(--border);padding:7px 16px;font-size:11px;color:var(--mid)}
+.modal-dept b{color:var(--black)}
+.modal-body{padding:16px}
+.frow{margin-bottom:12px}
+.frow label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.frow input,.frow textarea,.frow select{width:100%;border:1px solid var(--border);border-radius:4px;padding:7px 9px;font-size:13px;font-family:inherit;color:var(--black);background:#fff;transition:border-color .15s}
+.frow input:focus,.frow textarea:focus,.frow select:focus{outline:none;border-color:var(--red)}
+.frow textarea{resize:vertical;min-height:68px}
+.f2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f2col .frow{margin:0}
+.attach-zone{border:1.5px dashed var(--border);border-radius:4px;padding:13px;text-align:center;cursor:pointer;color:var(--mid);font-size:12px;transition:all .15s}
+.attach-zone:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.attach-icon-lg{font-size:18px;display:block;margin-bottom:3px}
+.attach-names{margin-top:5px;font-size:11px;color:#888}
+.modal-ftr{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.btn-cancel{background:none;border:1px solid var(--border);padding:7px 14px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--mid);font-family:inherit}
+.btn-cancel:hover{background:#F5F5F5}
+.btn-save{background:var(--red);border:none;color:#fff;padding:7px 16px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-save.black{background:var(--black)}
+.btn-save:hover{background:var(--red-dark)}
+.btn-save.black:hover{background:#333}
+
+/* wave guide modal */
+.wg-modal{background:#fff;border-radius:6px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.wg-hdr{background:var(--black);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:6px 6px 0 0;position:sticky;top:0;z-index:5}
+.wg-hdr h3{color:#fff;font-size:14px;font-weight:600}
+.wg-intro{padding:14px 18px;background:#F7F7F7;border-bottom:1px solid var(--border);font-size:12px;color:var(--mid);line-height:1.6}
+.wave-section{border-bottom:1px solid var(--border)}
+.wave-section:last-child{border-bottom:none}
+.wave-section-hdr{padding:14px 18px 10px;display:flex;align-items:flex-start;gap:12px}
+.wave-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.wp-pilot{background:#1A1A1A;color:#fff}
+.wp-w2{background:#D01C1C;color:#fff}
+.wp-w3{background:var(--red-light);color:var(--red-dark)}
+.wave-section-title{font-size:14px;font-weight:600;color:var(--black)}
+.wave-section-sub{font-size:11px;color:var(--mid);margin-top:2px}
+.wave-details{padding:0 18px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wd-item{background:#FAFAFA;border:1px solid var(--border);border-radius:4px;padding:9px 11px}
+.wd-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-bottom:3px}
+.wd-val{font-size:12px;color:var(--black);line-height:1.4}
+.wave-steps{padding:0 18px 14px;display:flex;flex-direction:column;gap:5px}
+.ws-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--gray);line-height:1.4}
+.ws-num{width:18px;height:18px;background:var(--red);color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.wg-ftr{padding:12px 18px;border-top:1px solid var(--border);background:#F7F7F7;border-radius:0 0 6px 6px;text-align:right}
+.btn-close-wg{background:var(--black);border:none;color:#fff;padding:7px 18px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* toast */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:9px 16px;border-radius:4px;font-size:12px;border-left:3px solid var(--red);display:none;z-index:9999;white-space:nowrap}
+.toast.on{display:block}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="cross"><svg viewBox="0 0 12 12"><rect x="5" y="1" width="2" height="10"/><rect x="1" y="5" width="10" height="2"/></svg></div>
+  <span class="topbar-title">AI Program Hub</span>
+  <span class="topbar-sub">IT Program Management</span>
+</div>
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>AI Initiative Tracker</h1>
+    <p>Department-level AI program progress &mdash; all waves</p>
+  </div>
+  <div class="header-actions">
+    <button class="wave-btn" onclick="openWaveGuide()">&#9432; What do Pilot &amp; Waves mean?</button>
+    <button class="add-dept-btn" onclick="openDeptModal(null)">&#43; Add Department</button>
+  </div>
+</div>
+
+<div class="dash-panel">
+  <div class="dash-top">
+    <div class="kpi-card kc-total">
+      <div class="kpi-label">Total Initiatives</div>
+      <div class="kpi-value" id="c-total">0</div>
+      <div class="kpi-sub" id="c-total-sub">across 0 departments</div>
+    </div>
+    <div class="kpi-card kc-active">
+      <div class="kpi-label">Active</div>
+      <div class="kpi-value" id="c-a">0</div>
+      <div class="kpi-sub">live &amp; running</div>
+    </div>
+    <div class="kpi-card kc-inprog">
+      <div class="kpi-label">In Progress</div>
+      <div class="kpi-value" id="c-i">0</div>
+      <div class="kpi-sub">being built</div>
+    </div>
+    <div class="kpi-card kc-planned">
+      <div class="kpi-label">Planned</div>
+      <div class="kpi-value" id="c-p">0</div>
+      <div class="kpi-sub">scheduled</div>
+    </div>
+    <div class="kpi-card kc-complete">
+      <div class="kpi-label">Complete</div>
+      <div class="kpi-value" id="c-c">0</div>
+      <div class="kpi-sub">delivered</div>
+    </div>
+    <div class="kpi-card kc-depts">
+      <div class="kpi-label">Departments</div>
+      <div class="kpi-value" id="c-depts">0</div>
+      <div class="kpi-sub" id="c-depts-sub">enrolled</div>
+    </div>
+  </div>
+  <div class="dash-bottom">
+    <div>
+      <div class="dash-section-title">Initiative Status Breakdown</div>
+      <div class="progress-rows">
+        <div class="prog-row"><span class="prog-label">Active</span><div class="prog-track"><div class="prog-fill pf-active" id="pb-a" style="width:0%"></div></div><span class="prog-count" id="pn-a">0</span><span class="prog-pct" id="pp-a">—</span></div>
+        <div class="prog-row"><span class="prog-label">In Progress</span><div class="prog-track"><div class="prog-fill pf-inprog" id="pb-i" style="width:0%"></div></div><span class="prog-count" id="pn-i">0</span><span class="prog-pct" id="pp-i">—</span></div>
+        <div class="prog-row"><span class="prog-label">Planned</span><div class="prog-track"><div class="prog-fill pf-planned" id="pb-p" style="width:0%"></div></div><span class="prog-count" id="pn-p">0</span><span class="prog-pct" id="pp-p">—</span></div>
+        <div class="prog-row"><span class="prog-label">Complete</span><div class="prog-track"><div class="prog-fill pf-complete" id="pb-c" style="width:0%"></div></div><span class="prog-count" id="pn-c">0</span><span class="prog-pct" id="pp-c">—</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="dash-section-title">Progress by Wave</div>
+      <div class="wave-rows" id="wave-rows"></div>
+    </div>
+  </div>
+</div>
+
+<div class="content" id="dept-list"></div>
+
+<!-- INITIATIVE MODAL -->
+<div class="overlay" id="ini-overlay">
+  <div class="modal">
+    <div class="modal-hdr" id="ini-modal-hdr">
+      <h3 id="ini-modal-title">Add New AI Initiative</h3>
+      <button class="modal-x" onclick="closeIniModal()">&times;</button>
+    </div>
+    <div class="modal-dept">Department: <b id="m-dept">—</b></div>
+    <div class="modal-body">
+      <div class="frow"><label>Initiative Title *</label><input id="f-title" type="text" placeholder="e.g. Automated SOP Generation"></div>
+      <div class="frow"><label>AI Leader</label><input id="f-leader" type="text" placeholder="Name of the person leading this initiative"></div>
+      <div class="frow"><label>Description</label><textarea id="f-desc" placeholder="Describe the initiative, goals, and expected outcomes..."></textarea></div>
+      <div class="f2col">
+        <div class="frow"><label>Status</label>
+          <select id="f-status">
+            <option value="planned">Planned</option>
+            <option value="inprog">In Progress</option>
+            <option value="active">Active</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+        <div class="frow"><label>Expected Due Date</label><input id="f-due" type="date"></div>
+      </div>
+      <div class="frow" style="margin-top:14px">
+        <label>Attachments</label>
+        <div class="attach-zone" onclick="fakeAttach()">
+          <span class="attach-icon-lg">&#128206;</span>
+          Click to attach files &mdash; or drag &amp; drop
+          <div class="attach-names" id="f-attach-names"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn-cancel" onclick="closeIniModal()">Cancel</button>
+      <button class="btn-save" id="ini-save-btn" onclick="saveIni()">Save Initiative</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEPARTMENT MODAL -->
+<div class="overlay" id="dept-overlay">
+  <div class="modal">
+    <div class="modal-hdr dark-hdr">
+      <h3 id="dept-modal-title">Add Department</h3>
+      <button class="modal-x" onclick="closeDeptModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="f2col" style="margin-bottom:12px">
+        <div class="frow" style="margin:0"><label>Department Name *</label><input id="d-name" type="text" placeholder="e.g. Finance"></div>
+        <div class="frow" style="margin:0"><label>Abbreviation *</label><input id="d-abbr" type="text" placeholder="e.g. FIN" maxlength="4"></div>
+      </div>
+      <div class="f2col" style="margin-bottom:12px">
+        <div class="frow" style="margin:0"><label>Champion Name</label><input id="d-champion" type="text" placeholder="Full name"></div>
+        <div class="frow" style="margin:0"><label>AI Leader</label><input id="d-ailead" type="text" placeholder="Full name"></div>
+      </div>
+      <div class="frow"><label>Wave</label>
+        <select id="d-wave">
+          <option value="Pilot">Pilot</option>
+          <option value="Wave 2">Wave 2</option>
+          <option value="Wave 3">Wave 3</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn-cancel" onclick="closeDeptModal()">Cancel</button>
+      <button class="btn-save black" id="dept-save-btn" onclick="saveDept()">Save Department</button>
+    </div>
+  </div>
+</div>
+
+<!-- WAVE GUIDE MODAL -->
+<div class="overlay" id="wg-overlay">
+  <div class="wg-modal">
+    <div class="wg-hdr">
+      <h3>&#9432; Program Wave Guide</h3>
+      <button class="modal-x" onclick="closeWaveGuide()">&times;</button>
+    </div>
+    <div>
+      <div class="wg-intro">The AI introduction program rolls out department by department in three stages. Each stage gets a different level of IT support and pace. Here is what each one means.</div>
+      <div class="wave-section">
+        <div class="wave-section-hdr"><span class="wave-pill wp-pilot">Pilot</span><div><div class="wave-section-title">Pilot Wave &mdash; First Movers</div><div class="wave-section-sub">Highest IT support &middot; Sets the template for all other waves</div></div></div>
+        <div class="wave-details">
+          <div class="wd-item"><div class="wd-label">Who</div><div class="wd-val">2&ndash;3 selected departments with strong champions and clear use cases</div></div>
+          <div class="wd-item"><div class="wd-label">IT Support</div><div class="wd-val">High &mdash; IT Lead attends weekly check-ins and reviews all prompts</div></div>
+          <div class="wd-item"><div class="wd-label">Goal</div><div class="wd-val">Prove the model works, capture 3+ reusable use cases, build the playbook</div></div>
+          <div class="wd-item"><div class="wd-label">Timeline</div><div class="wd-val">Weeks 1&ndash;8 of the program</div></div>
+        </div>
+        <div class="wave-steps">
+          <div class="ws-item"><div class="ws-num">1</div><span>Nominated departments confirmed by IT Lead and dept head</span></div>
+          <div class="ws-item"><div class="ws-num">2</div><span>60-minute intro meeting held before any access is granted</span></div>
+          <div class="ws-item"><div class="ws-num">3</div><span>Department plan documented with 3 minimum use cases and baselines</span></div>
+          <div class="ws-item"><div class="ws-num">4</div><span>Access granted &mdash; Tech Rep builds first working prompt workflow</span></div>
+          <div class="ws-item"><div class="ws-num">5</div><span>Monthly progress review with IT Lead; results shared with leadership</span></div>
+        </div>
+      </div>
+      <div class="wave-section">
+        <div class="wave-section-hdr"><span class="wave-pill wp-w2">Wave 2</span><div><div class="wave-section-title">Wave 2 &mdash; Expanding the Program</div><div class="wave-section-sub">Moderate IT support &middot; Learns from Pilot results</div></div></div>
+        <div class="wave-details">
+          <div class="wd-item"><div class="wd-label">Who</div><div class="wd-val">Next tier of departments, onboarded after Pilot departments are activated</div></div>
+          <div class="wd-item"><div class="wd-label">IT Support</div><div class="wd-val">Moderate &mdash; dept relies more on its own Tech Rep day-to-day</div></div>
+          <div class="wd-item"><div class="wd-label">Goal</div><div class="wd-val">Reuse Pilot use cases, expand the library, reduce time-to-first-result</div></div>
+          <div class="wd-item"><div class="wd-label">Timeline</div><div class="wd-val">Begins when at least 2 Pilot depts reach Step 4 (Activate)</div></div>
+        </div>
+        <div class="wave-steps">
+          <div class="ws-item"><div class="ws-num">1</div><span>Pilot results shared with Wave 2 Champions before their intro meeting</span></div>
+          <div class="ws-item"><div class="ws-num">2</div><span>Use Case Library reviewed &mdash; Wave 2 starts with proven Pilot prompts</span></div>
+          <div class="ws-item"><div class="ws-num">3</div><span>Same 5-step journey, faster pace &mdash; plan target is 5 days not 7</span></div>
+          <div class="ws-item"><div class="ws-num">4</div><span>Tech Reps peer-connect with Pilot Tech Reps for prompt advice</span></div>
+        </div>
+      </div>
+      <div class="wave-section">
+        <div class="wave-section-hdr"><span class="wave-pill wp-w3">Wave 3</span><div><div class="wave-section-title">Wave 3 &mdash; Full Rollout</div><div class="wave-section-sub">Light-touch IT support &middot; Departments largely self-serve</div></div></div>
+        <div class="wave-details">
+          <div class="wd-item"><div class="wd-label">Who</div><div class="wd-val">Remaining departments &mdash; full organisation coverage</div></div>
+          <div class="wd-item"><div class="wd-label">IT Support</div><div class="wd-val">Light &mdash; champions run onboarding using the established playbook</div></div>
+          <div class="wd-item"><div class="wd-label">Goal</div><div class="wd-val">Complete org-wide coverage; Use Case Library at 25+ entries</div></div>
+          <div class="wd-item"><div class="wd-label">Timeline</div><div class="wd-val">Begins when Wave 2 departments are activated</div></div>
+        </div>
+        <div class="wave-steps">
+          <div class="ws-item"><div class="ws-num">1</div><span>Champions use the playbook to run their own intro meetings</span></div>
+          <div class="ws-item"><div class="ws-num">2</div><span>IT Lead reviews plans but does not attend all intro meetings</span></div>
+          <div class="ws-item"><div class="ws-num">3</div><span>All departments contribute to and draw from the shared Use Case Library</span></div>
+          <div class="ws-item"><div class="ws-num">4</div><span>Quarterly program review replaces monthly for mature departments</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="wg-ftr"><button class="btn-close-wg" onclick="closeWaveGuide()">Got it</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var depts = [
+  {id:'qa',abbr:'QA',name:'Quality Assurance',champion:'Sandra Müller',aiLead:'Thomas Becker',wave:'Pilot',
+   ini:[
+    {id:'i1',title:'CAPA Summary Automation',leader:'Thomas Becker',desc:'Use Claude to draft CAPA summaries from audit data',status:'active',due:'2025-08-15',clips:1},
+    {id:'i2',title:'SOP First Draft Generator',leader:'Thomas Becker',desc:'Prompt workflow for generating SOPs from process notes',status:'inprog',due:'2025-09-01',clips:0}
+  ]},
+  {id:'ops',abbr:'OPS',name:'Operations',champion:'Marco Fontana',aiLead:'Lena Fischer',wave:'Pilot',
+   ini:[
+    {id:'i3',title:'Shift Report Automation',leader:'Lena Fischer',desc:'Auto-generate shift handover reports from log entries',status:'active',due:'2025-07-30',clips:2},
+    {id:'i4',title:'Maintenance Log Summarizer',leader:'Lena Fischer',desc:'Summarize equipment maintenance logs for weekly review',status:'planned',due:'2025-10-01',clips:0}
+  ]},
+  {id:'eng',abbr:'ENG',name:'Engineering',champion:'Reto Zimmermann',aiLead:'Claudia Huber',wave:'Wave 2',
+   ini:[
+    {id:'i5',title:'RFQ Response Drafts',leader:'Claudia Huber',desc:'Draft RFQ responses using standardized Claude prompts',status:'inprog',due:'2025-09-15',clips:1}
+  ]},
+  {id:'hr',abbr:'HR',name:'Human Resources',champion:'Natalie Schäfer',aiLead:'Erik Vonlanthen',wave:'Wave 2',ini:[]},
+  {id:'fin',abbr:'FIN',name:'Finance',champion:'Pierre Dupont',aiLead:'Jasmin Keller',wave:'Wave 3',ini:[]}
+];
+
+var statusLabel={active:'Active',inprog:'In Progress',planned:'Planned',complete:'Complete'};
+var statusClass={active:'b-active',inprog:'b-inprog',planned:'b-planned',complete:'b-complete'};
+var _iniDeptId=null, _iniEditId=null, _deptEditId=null, _attachFaked=false;
+var _idCounter=100;
+
+function uid(){return 'x'+(++_idCounter);}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(d){if(!d)return '';var p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0];}
+
+/* ── counts ── */
+function updateCounts(){
+  var a=0,i=0,p=0,c=0,t=0;
+  depts.forEach(function(d){d.ini.forEach(function(n){t++;if(n.status==='active')a++;else if(n.status==='inprog')i++;else if(n.status==='planned')p++;else if(n.status==='complete')c++;});});
+  document.getElementById('c-total').textContent=t;
+  document.getElementById('c-total-sub').textContent='across '+depts.length+' department'+(depts.length!==1?'s':'');
+  document.getElementById('c-a').textContent=a;
+  document.getElementById('c-i').textContent=i;
+  document.getElementById('c-p').textContent=p;
+  document.getElementById('c-c').textContent=c;
+  document.getElementById('c-depts').textContent=depts.length;
+  var pilot=depts.filter(function(d){return d.wave==='Pilot';});
+  var w2=depts.filter(function(d){return d.wave==='Wave 2';});
+  var w3=depts.filter(function(d){return d.wave==='Wave 3';});
+  document.getElementById('c-depts-sub').textContent='Pilot: '+pilot.length+' · W2: '+w2.length+' · W3: '+w3.length;
+  function pct(n){return t>0?Math.round(n/t*100)+'%':'0%';}
+  function pw(n){return t>0?Math.round(n/t*100):'0';}
+  document.getElementById('pb-a').style.width=pw(a)+'%';document.getElementById('pn-a').textContent=a;document.getElementById('pp-a').textContent=pct(a);
+  document.getElementById('pb-i').style.width=pw(i)+'%';document.getElementById('pn-i').textContent=i;document.getElementById('pp-i').textContent=pct(i);
+  document.getElementById('pb-p').style.width=pw(p)+'%';document.getElementById('pn-p').textContent=p;document.getElementById('pp-p').textContent=pct(p);
+  document.getElementById('pb-c').style.width=pw(c)+'%';document.getElementById('pn-c').textContent=c;document.getElementById('pp-c').textContent=pct(c);
+  var waves=[{key:'Pilot',cls:'wr-pilot',list:pilot},{key:'Wave 2',cls:'wr-w2',list:w2},{key:'Wave 3',cls:'wr-w3',list:w3}];
+  var whtml='';
+  waves.forEach(function(w){
+    var wt=0,wa=0,wi=0,wc=0;
+    w.list.forEach(function(d){d.ini.forEach(function(n){wt++;if(n.status==='active')wa++;else if(n.status==='inprog')wi++;else if(n.status==='complete')wc++;});});
+    whtml+='<div class="wave-row '+w.cls+'">'
+      +'<div><div class="wave-row-name">'+w.key+'</div><div class="wave-row-meta">'+w.list.length+' dept'+(w.list.length!==1?'s':'')+' &middot; '+wt+' initiative'+(wt!==1?'s':'')+'</div></div>'
+      +'<div class="wave-stats">'
+      +'<div class="wave-stat"><span class="wave-stat-n" style="color:#16A34A">'+wa+'</span><span class="wave-stat-l">Active</span></div>'
+      +'<div class="wave-stat"><span class="wave-stat-n" style="color:#D97706">'+wi+'</span><span class="wave-stat-l">In Prog</span></div>'
+      +'<div class="wave-stat"><span class="wave-stat-n" style="color:#0369A1">'+wc+'</span><span class="wave-stat-l">Done</span></div>'
+      +'</div>'
+      +'</div>';
+  });
+  document.getElementById('wave-rows').innerHTML=whtml;
+}
+
+/* ── render ── */
+function render(){
+  var el=document.getElementById('dept-list');
+  var openIds={};
+  el.querySelectorAll('.dept-card.open').forEach(function(c){openIds[c.id]=true;});
+  el.innerHTML='';
+  depts.forEach(function(dept){
+    var rows='';
+    dept.ini.forEach(function(n){
+      rows+='<div class="ini-row">'
+        +'<div><div class="ini-title">'+esc(n.title)+'</div><div class="ini-desc">'+esc(n.desc)+'</div></div>'
+        +'<div class="ini-leader">&#128100; '+esc(n.leader)+'</div>'
+        +'<div class="ini-due">'+fmtDate(n.due)+'</div>'
+        +'<span class="badge '+statusClass[n.status]+'">'+statusLabel[n.status]+'</span>'
+        +'<div class="ini-row-actions">'
+        +(n.clips>0?'<span class="clip" title="Attachment">&#128206;</span>':'')
+        +'<button class="icon-btn" title="Edit initiative" onclick="openIniModal(\''+dept.id+'\',\''+n.id+'\')">&#9998;</button>'
+        +'<button class="icon-btn del" title="Delete initiative" onclick="deleteIni(\''+dept.id+'\',\''+n.id+'\')">&#10005;</button>'
+        +'</div>'
+        +'</div>';
+    });
+    if(!rows) rows='<div class="ini-empty">No initiatives yet &mdash; use the button below to add one.</div>';
+
+    var card=document.createElement('div');
+    card.className='dept-card'+(openIds['card-'+dept.id]?' open':'');
+    card.id='card-'+dept.id;
+    card.innerHTML=
+      '<div class="dept-hdr">'
+        +'<div class="dept-hdr-click" onclick="toggle(\''+dept.id+'\')">'
+          +'<div class="abbr">'+esc(dept.abbr)+'</div>'
+          +'<div class="dept-info">'
+            +'<div class="dept-name">'+esc(dept.name)+' <span class="dept-wave">&middot; '+esc(dept.wave)+'</span></div>'
+            +'<div class="dept-roles">Champion: <b>'+esc(dept.champion||'TBD')+'</b> &nbsp;&middot;&nbsp; AI Leader: <b>'+esc(dept.aiLead||'TBD')+'</b></div>'
+          +'</div>'
+          +'<div class="dept-meta">'
+            +'<span class="count-badge">'+dept.ini.length+' initiative'+(dept.ini.length!==1?'s':'')+'</span>'
+            +'<i class="chevron">&#8964;</i>'
+          +'</div>'
+        +'</div>'
+        +'<div class="dept-actions">'
+          +'<button class="icon-btn" title="Edit department" onclick="openDeptModal(\''+dept.id+'\')">&#9998; Edit</button>'
+          +'<button class="icon-btn del" title="Delete department" onclick="confirmDeleteDept(\''+dept.id+'\')">&#10005; Delete</button>'
+        +'</div>'
+      +'</div>'
+      +'<div class="dept-body" id="body-'+dept.id+'">'
+        +'<div id="del-confirm-'+dept.id+'"></div>'
+        +rows
+        +'<div class="add-bar"><button class="add-btn" onclick="openIniModal(\''+dept.id+'\',null)">&#43; Add Initiative</button></div>'
+      +'</div>';
+    el.appendChild(card);
+  });
+  updateCounts();
+}
+
+function toggle(id){
+  var c=document.getElementById('card-'+id);
+  c.classList.toggle('open');
+}
+
+/* ── delete initiative ── */
+function deleteIni(deptId,iniId){
+  var dept=depts.find(function(d){return d.id===deptId;});
+  dept.ini=dept.ini.filter(function(n){return n.id!==iniId;});
+  render();
+  showToast('Initiative removed');
+}
+
+/* ── confirm delete dept ── */
+function confirmDeleteDept(deptId){
+  var dept=depts.find(function(d){return d.id===deptId;});
+  var card=document.getElementById('card-'+deptId);
+  card.classList.add('open');
+  var box=document.getElementById('del-confirm-'+deptId);
+  box.innerHTML='<div class="del-confirm">'
+    +'<span>Delete <b>'+esc(dept.name)+'</b> and all its initiatives? This cannot be undone.</span>'
+    +'<div class="del-confirm-actions">'
+    +'<button class="btn-del-no" onclick="cancelDeleteDept(\''+deptId+'\')">Cancel</button>'
+    +'<button class="btn-del-yes" onclick="deleteDept(\''+deptId+'\')">Yes, Delete</button>'
+    +'</div></div>';
+}
+function cancelDeleteDept(deptId){
+  document.getElementById('del-confirm-'+deptId).innerHTML='';
+}
+function deleteDept(deptId){
+  var dept=depts.find(function(d){return d.id===deptId;});
+  var name=dept.name;
+  depts=depts.filter(function(d){return d.id!==deptId;});
+  render();
+  showToast(name+' deleted');
+}
+
+/* ── initiative modal ── */
+function openIniModal(deptId,iniId){
+  _iniDeptId=deptId;
+  _iniEditId=iniId;
+  _attachFaked=false;
+  var dept=depts.find(function(d){return d.id===deptId;});
+  document.getElementById('m-dept').textContent=dept.name;
+  if(iniId){
+    var ini=dept.ini.find(function(n){return n.id===iniId;});
+    document.getElementById('ini-modal-title').textContent='Edit Initiative';
+    document.getElementById('f-title').value=ini.title;
+    document.getElementById('f-leader').value=ini.leader;
+    document.getElementById('f-desc').value=ini.desc;
+    document.getElementById('f-status').value=ini.status;
+    document.getElementById('f-due').value=ini.due||'';
+    document.getElementById('f-attach-names').textContent=ini.clips?'&#128206; Attachment present':'';
+    _attachFaked=ini.clips>0;
+  } else {
+    document.getElementById('ini-modal-title').textContent='Add New AI Initiative';
+    document.getElementById('f-title').value='';
+    document.getElementById('f-leader').value='';
+    document.getElementById('f-desc').value='';
+    document.getElementById('f-status').value='planned';
+    document.getElementById('f-due').value='';
+    document.getElementById('f-attach-names').textContent='';
+  }
+  document.getElementById('ini-overlay').classList.add('on');
+}
+function closeIniModal(){document.getElementById('ini-overlay').classList.remove('on');_iniDeptId=null;_iniEditId=null;}
+function fakeAttach(){_attachFaked=!_attachFaked;document.getElementById('f-attach-names').textContent=_attachFaked?'&#128206; Document attached':'';}
+function saveIni(){
+  var title=document.getElementById('f-title').value.trim();
+  if(!title){document.getElementById('f-title').focus();return;}
+  var dept=depts.find(function(d){return d.id===_iniDeptId;});
+  if(_iniEditId){
+    var ini=dept.ini.find(function(n){return n.id===_iniEditId;});
+    ini.title=title;
+    ini.leader=document.getElementById('f-leader').value.trim()||'TBD';
+    ini.desc=document.getElementById('f-desc').value.trim();
+    ini.status=document.getElementById('f-status').value;
+    ini.due=document.getElementById('f-due').value;
+    ini.clips=_attachFaked?1:0;
+    closeIniModal();render();
+    document.getElementById('card-'+_iniDeptId) && document.getElementById('card-'+dept.id).classList.add('open');
+    showToast('"'+title+'" updated');
+  } else {
+    dept.ini.push({id:uid(),title:title,leader:document.getElementById('f-leader').value.trim()||'TBD',desc:document.getElementById('f-desc').value.trim(),status:document.getElementById('f-status').value,due:document.getElementById('f-due').value,clips:_attachFaked?1:0});
+    closeIniModal();render();
+    document.getElementById('card-'+dept.id).classList.add('open');
+    showToast('"'+title+'" added to '+dept.name);
+  }
+}
+
+/* ── dept modal ── */
+function openDeptModal(deptId){
+  _deptEditId=deptId;
+  if(deptId){
+    var dept=depts.find(function(d){return d.id===deptId;});
+    document.getElementById('dept-modal-title').textContent='Edit Department';
+    document.getElementById('d-name').value=dept.name;
+    document.getElementById('d-abbr').value=dept.abbr;
+    document.getElementById('d-champion').value=dept.champion||'';
+    document.getElementById('d-ailead').value=dept.aiLead||'';
+    document.getElementById('d-wave').value=dept.wave;
+  } else {
+    document.getElementById('dept-modal-title').textContent='Add Department';
+    document.getElementById('d-name').value='';
+    document.getElementById('d-abbr').value='';
+    document.getElementById('d-champion').value='';
+    document.getElementById('d-ailead').value='';
+    document.getElementById('d-wave').value='Pilot';
+  }
+  document.getElementById('dept-overlay').classList.add('on');
+}
+function closeDeptModal(){document.getElementById('dept-overlay').classList.remove('on');_deptEditId=null;}
+function saveDept(){
+  var name=document.getElementById('d-name').value.trim();
+  var abbr=document.getElementById('d-abbr').value.trim().toUpperCase();
+  if(!name||!abbr){if(!name)document.getElementById('d-name').focus();else document.getElementById('d-abbr').focus();return;}
+  if(_deptEditId){
+    var dept=depts.find(function(d){return d.id===_deptEditId;});
+    dept.name=name;dept.abbr=abbr;
+    dept.champion=document.getElementById('d-champion').value.trim();
+    dept.aiLead=document.getElementById('d-ailead').value.trim();
+    dept.wave=document.getElementById('d-wave').value;
+    closeDeptModal();render();
+    document.getElementById('card-'+dept.id).classList.add('open');
+    showToast(name+' updated');
+  } else {
+    var newId=uid();
+    depts.push({id:newId,abbr:abbr,name:name,champion:document.getElementById('d-champion').value.trim(),aiLead:document.getElementById('d-ailead').value.trim(),wave:document.getElementById('d-wave').value,ini:[]});
+    closeDeptModal();render();
+    document.getElementById('card-'+newId).classList.add('open');
+    showToast(name+' added');
+  }
+}
+
+/* ── wave guide ── */
+function openWaveGuide(){document.getElementById('wg-overlay').classList.add('on');}
+function closeWaveGuide(){document.getElementById('wg-overlay').classList.remove('on');}
+
+/* ── close on backdrop ── */
+['ini-overlay','dept-overlay','wg-overlay'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+});
+
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2600);}
+
+/* ── init ── */
+render();
+document.getElementById('card-qa').classList.add('open');
+document.getElementById('card-ops').classList.add('open');
+</script>
+</body>
+</html>
