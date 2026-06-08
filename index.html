@@ -181,6 +181,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wg-ftr{padding:12px 18px;border-top:1px solid var(--border);background:#F7F7F7;border-radius:0 0 6px 6px;text-align:right}
 .btn-close-wg{background:var(--black);border:none;color:#fff;padding:7px 18px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 
+/* dept nav */
+.dept-nav{background:#fff;border-bottom:1px solid var(--border);border-left:2px solid var(--black);border-right:2px solid var(--black);padding:8px 22px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:42px}
+.dept-nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-right:4px;flex-shrink:0}
+.dept-nav-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gray);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.dept-nav-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.dept-nav-btn .nav-abbr{background:var(--red);color:#fff;border-radius:2px;padding:1px 4px;font-size:9px;font-weight:700;letter-spacing:.03em}
+.dept-nav-empty{font-size:11px;color:#BBB;font-style:italic}
+
 /* toast */
 .toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:9px 16px;border-radius:4px;font-size:12px;border-left:3px solid var(--red);display:none;z-index:9999;white-space:nowrap}
 .toast.on{display:block}
@@ -206,6 +214,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 <input type="file" id="load-file-input" accept=".json" style="display:none" onchange="handleFileLoad(event)">
+
+<div class="dept-nav" id="dept-nav"></div>
 
 <div class="dash-panel">
   <div class="dash-top">
@@ -494,6 +504,7 @@ function render(){
     el.appendChild(card);
   });
   updateCounts();
+  renderNav();
 }
 
 function toggle(id){
@@ -641,7 +652,28 @@ function closeWaveGuide(){document.getElementById('wg-overlay').classList.remove
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
 });
 
-/* ── save / load ── */
+/* ── dept nav ── */
+function renderNav(){
+  var el=document.getElementById('dept-nav');
+  if(!depts.length){el.innerHTML='<span class="dept-nav-empty">Add departments to see quick navigation here</span>';return;}
+  var html='<span class="dept-nav-label">Jump to:</span>';
+  depts.forEach(function(d){
+    html+='<button class="dept-nav-btn" onclick="jumpTo(\''+d.id+'\')">'
+      +'<span class="nav-abbr">'+esc(d.abbr)+'</span>'
+      +esc(d.name)
+      +'</button>';
+  });
+  el.innerHTML=html;
+}
+
+function jumpTo(deptId){
+  var card=document.getElementById('card-'+deptId);
+  if(!card) return;
+  card.classList.add('open');
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+
 function saveData(){
   var data={version:1,savedAt:new Date().toISOString(),depts:depts};
   var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
@@ -682,4 +714,3 @@ render();
 </script>
 </body>
 </html>
-
