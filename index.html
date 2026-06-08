@@ -14,11 +14,15 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--black);font-size:14px;position:relative}
 
 /* topbar */
-.topbar{background:var(--black);color:#fff;padding:9px 20px;display:flex;align-items:center;gap:10px;border:2px solid var(--black);border-bottom:none}
+.topbar{background:var(--black);color:#fff;padding:9px 20px;display:flex;align-items:center;gap:10px;border:2px solid var(--black)}
 .cross{width:22px;height:22px;background:var(--red);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .cross svg{width:12px;height:12px;fill:#fff}
 .topbar-title{font-size:13px;font-weight:500;letter-spacing:.02em}
 .topbar-sub{font-size:11px;color:#888;margin-left:auto}
+.sync-indicator{font-size:10px;padding:3px 8px;border-radius:3px;font-weight:600;display:flex;align-items:center;gap:4px}
+.sync-indicator.synced{background:#1A3A1A;color:#4ADE80}
+.sync-indicator.syncing{background:#3A2A00;color:#FCD34D}
+.sync-indicator.error{background:#3A0A0A;color:#FCA5A5}
 
 /* page header */
 .page-header{background:var(--red);padding:18px 22px 16px;border-bottom:4px solid var(--red-dark);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;border-left:2px solid var(--black);border-right:2px solid var(--black)}
@@ -29,6 +33,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wave-btn:hover{background:rgba(255,255,255,.28)}
 .add-dept-btn{background:#fff;border:none;color:var(--red);padding:5px 13px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;transition:background .15s}
 .add-dept-btn:hover{background:#f0f0f0}
+
+/* dept nav */
+.dept-nav{background:#fff;border-bottom:1px solid var(--border);border-left:2px solid var(--black);border-right:2px solid var(--black);padding:8px 22px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:42px}
+.dept-nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-right:4px;flex-shrink:0}
+.dept-nav-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gray);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.dept-nav-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.dept-nav-btn .nav-abbr{background:var(--red);color:#fff;border-radius:2px;padding:1px 4px;font-size:9px;font-weight:700;letter-spacing:.03em}
+.dept-nav-empty{font-size:11px;color:#BBB;font-style:italic}
 
 /* dashboard panel */
 .dash-panel{background:#fff;border-bottom:1px solid var(--border);padding:16px 22px 14px;border-left:2px solid var(--black);border-right:2px solid var(--black)}
@@ -50,17 +62,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .prog-label{font-size:11px;color:var(--gray);width:74px;flex-shrink:0}
 .prog-track{flex:1;height:6px;background:#EBEBEB;border-radius:3px;overflow:hidden}
 .prog-fill{height:100%;border-radius:3px;transition:width .3s}
-.pf-active{background:#16A34A}
-.pf-inprog{background:#D97706}
-.pf-planned{background:#9CA3AF}
-.pf-complete{background:#0369A1}
+.pf-active{background:#16A34A}.pf-inprog{background:#D97706}.pf-planned{background:#9CA3AF}.pf-complete{background:#0369A1}
 .prog-count{font-size:11px;font-weight:600;color:var(--black);width:20px;text-align:right;flex-shrink:0}
 .prog-pct{font-size:10px;color:var(--mid);width:30px;text-align:right;flex-shrink:0}
 .wave-rows{display:flex;flex-direction:column;gap:6px}
 .wave-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:#F7F7F7;border-radius:4px;border-left:3px solid transparent}
 .wave-row.wr-pilot{border-left-color:#1A1A1A}
 .wave-row.wr-w2{border-left-color:#D01C1C}
-.wave-row.wr-w3{border-left-color:#FBEAEA;border-left-color:#E8A0A0}
+.wave-row.wr-w3{border-left-color:#E8A0A0}
 .wave-row-name{font-size:12px;font-weight:600;color:var(--black)}
 .wave-row-meta{font-size:11px;color:var(--mid)}
 .wave-stats{display:flex;gap:10px}
@@ -70,6 +79,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* content */
 .content{padding:14px 22px;display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--black);border-right:2px solid var(--black);border-bottom:2px solid var(--black);border-radius:0 0 6px 6px}
+
+/* loading */
+.loading-bar{background:var(--red-light);border:1px solid var(--red);border-radius:4px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red-dark)}
+.spinner{width:16px;height:16px;border:2px solid var(--red-light);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* dept card */
 .dept-card{background:#fff;border:1px solid var(--border);border-radius:5px;overflow:visible}
@@ -86,14 +100,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .count-badge{font-size:10px;background:var(--red-light);color:var(--red-dark);padding:2px 7px;border-radius:3px;font-weight:700}
 .chevron{color:var(--mid);font-size:16px;line-height:1;transition:transform .2s;font-style:normal;display:inline-block}
 .dept-card.open .chevron{transform:rotate(180deg)}
-
-/* dept action buttons */
 .dept-actions{display:flex;gap:4px;align-items:center;margin-left:6px}
 .icon-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:4px 7px;cursor:pointer;font-size:12px;color:var(--mid);font-family:inherit;transition:all .15s;line-height:1}
 .icon-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
 .icon-btn.del:hover{border-color:#B91C1C;color:#B91C1C;background:#FEE2E2}
-
-/* dept body */
 .dept-body{display:none;border-top:1px solid var(--border)}
 .dept-card.open .dept-body{display:block}
 
@@ -109,7 +119,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .b-inprog{background:#FEF9C3;color:#854D0E}
 .b-planned{background:#F3F4F6;color:#4B5563}
 .b-complete{background:#E5E7EB;color:#374151}
-.clip{font-size:12px;color:var(--mid)}
 .ini-row-actions{display:flex;gap:3px}
 .ini-empty{padding:10px 14px 10px 52px;font-size:11px;color:#AAA;font-style:italic}
 
@@ -118,7 +127,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .add-btn{background:none;border:1.5px dashed var(--border);border-radius:4px;padding:5px 11px;font-size:12px;color:var(--mid);cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:inherit}
 .add-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
 
-/* confirm delete banner */
+/* confirm delete */
 .del-confirm{background:#FEF2F2;border:1px solid #FECACA;border-radius:4px;padding:10px 14px;margin:0 14px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#991B1B}
 .del-confirm-actions{display:flex;gap:6px;flex-shrink:0}
 .btn-del-yes{background:#B91C1C;border:none;color:#fff;padding:5px 12px;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -129,7 +138,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* overlay + modals */
 .overlay{display:none;position:absolute;top:0;left:0;right:0;bottom:0;min-height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-start;justify-content:center;padding-top:80px}
 .overlay.on{display:flex}
-.modal{background:#fff;border-radius:6px;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal{background:#fff;border-radius:6px;width:460px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
 .modal-hdr{background:var(--red);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:6px 6px 0 0;position:sticky;top:0;z-index:5}
 .modal-hdr.dark-hdr{background:var(--black)}
 .modal-hdr h3{color:#fff;font-size:14px;font-weight:600}
@@ -145,10 +154,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .frow textarea{resize:vertical;min-height:68px}
 .f2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .f2col .frow{margin:0}
-.attach-zone{border:1.5px dashed var(--border);border-radius:4px;padding:13px;text-align:center;cursor:pointer;color:var(--mid);font-size:12px;transition:all .15s}
-.attach-zone:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
-.attach-icon-lg{font-size:18px;display:block;margin-bottom:3px}
-.attach-names{margin-top:5px;font-size:11px;color:#888}
 .modal-ftr{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 .btn-cancel{background:none;border:1px solid var(--border);padding:7px 14px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--mid);font-family:inherit}
 .btn-cancel:hover{background:#F5F5F5}
@@ -156,9 +161,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-save.black{background:var(--black)}
 .btn-save:hover{background:var(--red-dark)}
 .btn-save.black:hover{background:#333}
+.btn-save:disabled{background:#ccc;cursor:not-allowed}
 
-/* wave guide modal */
-.wg-modal{background:#fff;border-radius:6px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+/* wave guide */
+.wg-modal{background:#fff;border-radius:6px;width:520px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
 .wg-hdr{background:var(--black);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:6px 6px 0 0;position:sticky;top:0;z-index:5}
 .wg-hdr h3{color:#fff;font-size:14px;font-weight:600}
 .wg-intro{padding:14px 18px;background:#F7F7F7;border-bottom:1px solid var(--border);font-size:12px;color:var(--mid);line-height:1.6}
@@ -166,9 +172,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wave-section:last-child{border-bottom:none}
 .wave-section-hdr{padding:14px 18px 10px;display:flex;align-items:flex-start;gap:12px}
 .wave-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px}
-.wp-pilot{background:#1A1A1A;color:#fff}
-.wp-w2{background:#D01C1C;color:#fff}
-.wp-w3{background:var(--red-light);color:var(--red-dark)}
+.wp-pilot{background:#1A1A1A;color:#fff}.wp-w2{background:#D01C1C;color:#fff}.wp-w3{background:var(--red-light);color:var(--red-dark)}
 .wave-section-title{font-size:14px;font-weight:600;color:var(--black)}
 .wave-section-sub{font-size:11px;color:var(--mid);margin-top:2px}
 .wave-details{padding:0 18px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -181,24 +185,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wg-ftr{padding:12px 18px;border-top:1px solid var(--border);background:#F7F7F7;border-radius:0 0 6px 6px;text-align:right}
 .btn-close-wg{background:var(--black);border:none;color:#fff;padding:7px 18px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 
-/* dept nav */
-.dept-nav{background:#fff;border-bottom:1px solid var(--border);border-left:2px solid var(--black);border-right:2px solid var(--black);padding:8px 22px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:42px}
-.dept-nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-right:4px;flex-shrink:0}
-.dept-nav-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gray);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
-.dept-nav-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
-.dept-nav-btn .nav-abbr{background:var(--red);color:#fff;border-radius:2px;padding:1px 4px;font-size:9px;font-weight:700;letter-spacing:.03em}
-.dept-nav-empty{font-size:11px;color:#BBB;font-style:italic}
-
 /* toast */
 .toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:9px 16px;border-radius:4px;font-size:12px;border-left:3px solid var(--red);display:none;z-index:9999;white-space:nowrap}
 .toast.on{display:block}
 </style>
 </head>
 <body>
+
 <div class="topbar">
   <div class="cross"><svg viewBox="0 0 12 12"><rect x="5" y="1" width="2" height="10"/><rect x="1" y="5" width="10" height="2"/></svg></div>
   <span class="topbar-title">AI Program Hub</span>
   <span class="topbar-sub">IT Program Management</span>
+  <span class="sync-indicator synced" id="sync-status">&#10003; Synced</span>
 </div>
 
 <div class="page-header">
@@ -208,47 +206,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <div class="header-actions">
     <button class="wave-btn" onclick="openWaveGuide()">&#9432; What do Pilot &amp; Waves mean?</button>
-    <button class="wave-btn" onclick="loadData()">&#8679; Load Data</button>
-    <button class="wave-btn" style="background:rgba(255,255,255,.25);font-weight:700" onclick="saveData()">&#8681; Save Data</button>
     <button class="add-dept-btn" onclick="openDeptModal(null)">&#43; Add Department</button>
   </div>
 </div>
-<input type="file" id="load-file-input" accept=".json" style="display:none" onchange="handleFileLoad(event)">
 
 <div class="dept-nav" id="dept-nav"></div>
 
 <div class="dash-panel">
   <div class="dash-top">
-    <div class="kpi-card kc-total">
-      <div class="kpi-label">Total Initiatives</div>
-      <div class="kpi-value" id="c-total">0</div>
-      <div class="kpi-sub" id="c-total-sub">across 0 departments</div>
-    </div>
-    <div class="kpi-card kc-active">
-      <div class="kpi-label">Active</div>
-      <div class="kpi-value" id="c-a">0</div>
-      <div class="kpi-sub">live &amp; running</div>
-    </div>
-    <div class="kpi-card kc-inprog">
-      <div class="kpi-label">In Progress</div>
-      <div class="kpi-value" id="c-i">0</div>
-      <div class="kpi-sub">being built</div>
-    </div>
-    <div class="kpi-card kc-planned">
-      <div class="kpi-label">Planned</div>
-      <div class="kpi-value" id="c-p">0</div>
-      <div class="kpi-sub">scheduled</div>
-    </div>
-    <div class="kpi-card kc-complete">
-      <div class="kpi-label">Complete</div>
-      <div class="kpi-value" id="c-c">0</div>
-      <div class="kpi-sub">delivered</div>
-    </div>
-    <div class="kpi-card kc-depts">
-      <div class="kpi-label">Departments</div>
-      <div class="kpi-value" id="c-depts">0</div>
-      <div class="kpi-sub" id="c-depts-sub">enrolled</div>
-    </div>
+    <div class="kpi-card kc-total"><div class="kpi-label">Total Initiatives</div><div class="kpi-value" id="c-total">0</div><div class="kpi-sub" id="c-total-sub">across 0 departments</div></div>
+    <div class="kpi-card kc-active"><div class="kpi-label">Active</div><div class="kpi-value" id="c-a">0</div><div class="kpi-sub">live &amp; running</div></div>
+    <div class="kpi-card kc-inprog"><div class="kpi-label">In Progress</div><div class="kpi-value" id="c-i">0</div><div class="kpi-sub">being built</div></div>
+    <div class="kpi-card kc-planned"><div class="kpi-label">Planned</div><div class="kpi-value" id="c-p">0</div><div class="kpi-sub">scheduled</div></div>
+    <div class="kpi-card kc-complete"><div class="kpi-label">Complete</div><div class="kpi-value" id="c-c">0</div><div class="kpi-sub">delivered</div></div>
+    <div class="kpi-card kc-depts"><div class="kpi-label">Departments</div><div class="kpi-value" id="c-depts">0</div><div class="kpi-sub" id="c-depts-sub">enrolled</div></div>
   </div>
   <div class="dash-bottom">
     <div>
@@ -272,10 +243,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- INITIATIVE MODAL -->
 <div class="overlay" id="ini-overlay">
   <div class="modal">
-    <div class="modal-hdr" id="ini-modal-hdr">
-      <h3 id="ini-modal-title">Add New AI Initiative</h3>
-      <button class="modal-x" onclick="closeIniModal()">&times;</button>
-    </div>
+    <div class="modal-hdr" id="ini-modal-hdr"><h3 id="ini-modal-title">Add New AI Initiative</h3><button class="modal-x" onclick="closeIniModal()">&times;</button></div>
     <div class="modal-dept">Department: <b id="m-dept">—</b></div>
     <div class="modal-body">
       <div class="frow"><label>Initiative Title *</label><input id="f-title" type="text" placeholder="e.g. Automated SOP Generation"></div>
@@ -283,22 +251,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="frow"><label>Description</label><textarea id="f-desc" placeholder="Describe the initiative, goals, and expected outcomes..."></textarea></div>
       <div class="f2col">
         <div class="frow"><label>Status</label>
-          <select id="f-status">
-            <option value="planned">Planned</option>
-            <option value="inprog">In Progress</option>
-            <option value="active">Active</option>
-            <option value="complete">Complete</option>
-          </select>
+          <select id="f-status"><option value="planned">Planned</option><option value="inprog">In Progress</option><option value="active">Active</option><option value="complete">Complete</option></select>
         </div>
         <div class="frow"><label>Expected Due Date</label><input id="f-due" type="date"></div>
-      </div>
-      <div class="frow" style="margin-top:14px">
-        <label>Attachments</label>
-        <div class="attach-zone" onclick="fakeAttach()">
-          <span class="attach-icon-lg">&#128206;</span>
-          Click to attach files &mdash; or drag &amp; drop
-          <div class="attach-names" id="f-attach-names"></div>
-        </div>
       </div>
     </div>
     <div class="modal-ftr">
@@ -311,10 +266,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- DEPARTMENT MODAL -->
 <div class="overlay" id="dept-overlay">
   <div class="modal">
-    <div class="modal-hdr dark-hdr">
-      <h3 id="dept-modal-title">Add Department</h3>
-      <button class="modal-x" onclick="closeDeptModal()">&times;</button>
-    </div>
+    <div class="modal-hdr dark-hdr"><h3 id="dept-modal-title">Add Department</h3><button class="modal-x" onclick="closeDeptModal()">&times;</button></div>
     <div class="modal-body">
       <div class="f2col" style="margin-bottom:12px">
         <div class="frow" style="margin:0"><label>Department Name *</label><input id="d-name" type="text" placeholder="e.g. Finance"></div>
@@ -325,11 +277,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="frow" style="margin:0"><label>AI Leader</label><input id="d-ailead" type="text" placeholder="Full name"></div>
       </div>
       <div class="frow"><label>Wave</label>
-        <select id="d-wave">
-          <option value="Pilot">Pilot</option>
-          <option value="Wave 2">Wave 2</option>
-          <option value="Wave 3">Wave 3</option>
-        </select>
+        <select id="d-wave"><option value="Pilot">Pilot</option><option value="Wave 2">Wave 2</option><option value="Wave 3">Wave 3</option></select>
       </div>
     </div>
     <div class="modal-ftr">
@@ -342,12 +290,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- WAVE GUIDE MODAL -->
 <div class="overlay" id="wg-overlay">
   <div class="wg-modal">
-    <div class="wg-hdr">
-      <h3>&#9432; Program Wave Guide</h3>
-      <button class="modal-x" onclick="closeWaveGuide()">&times;</button>
-    </div>
+    <div class="wg-hdr"><h3>&#9432; Program Wave Guide</h3><button class="modal-x" onclick="closeWaveGuide()">&times;</button></div>
     <div>
-      <div class="wg-intro">The AI introduction program rolls out department by department in three stages. Each stage gets a different level of IT support and pace. Here is what each one means.</div>
+      <div class="wg-intro">The AI introduction program rolls out department by department in three stages. Each stage gets a different level of IT support and pace.</div>
       <div class="wave-section">
         <div class="wave-section-hdr"><span class="wave-pill wp-pilot">Pilot</span><div><div class="wave-section-title">Pilot Wave &mdash; First Movers</div><div class="wave-section-sub">Highest IT support &middot; Sets the template for all other waves</div></div></div>
         <div class="wave-details">
@@ -355,13 +300,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="wd-item"><div class="wd-label">IT Support</div><div class="wd-val">High &mdash; IT Lead attends weekly check-ins and reviews all prompts</div></div>
           <div class="wd-item"><div class="wd-label">Goal</div><div class="wd-val">Prove the model works, capture 3+ reusable use cases, build the playbook</div></div>
           <div class="wd-item"><div class="wd-label">Timeline</div><div class="wd-val">Weeks 1&ndash;8 of the program</div></div>
-        </div>
-        <div class="wave-steps">
-          <div class="ws-item"><div class="ws-num">1</div><span>Nominated departments confirmed by IT Lead and dept head</span></div>
-          <div class="ws-item"><div class="ws-num">2</div><span>60-minute intro meeting held before any access is granted</span></div>
-          <div class="ws-item"><div class="ws-num">3</div><span>Department plan documented with 3 minimum use cases and baselines</span></div>
-          <div class="ws-item"><div class="ws-num">4</div><span>Access granted &mdash; Tech Rep builds first working prompt workflow</span></div>
-          <div class="ws-item"><div class="ws-num">5</div><span>Monthly progress review with IT Lead; results shared with leadership</span></div>
         </div>
       </div>
       <div class="wave-section">
@@ -372,12 +310,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="wd-item"><div class="wd-label">Goal</div><div class="wd-val">Reuse Pilot use cases, expand the library, reduce time-to-first-result</div></div>
           <div class="wd-item"><div class="wd-label">Timeline</div><div class="wd-val">Begins when at least 2 Pilot depts reach Step 4 (Activate)</div></div>
         </div>
-        <div class="wave-steps">
-          <div class="ws-item"><div class="ws-num">1</div><span>Pilot results shared with Wave 2 Champions before their intro meeting</span></div>
-          <div class="ws-item"><div class="ws-num">2</div><span>Use Case Library reviewed &mdash; Wave 2 starts with proven Pilot prompts</span></div>
-          <div class="ws-item"><div class="ws-num">3</div><span>Same 5-step journey, faster pace &mdash; plan target is 5 days not 7</span></div>
-          <div class="ws-item"><div class="ws-num">4</div><span>Tech Reps peer-connect with Pilot Tech Reps for prompt advice</span></div>
-        </div>
       </div>
       <div class="wave-section">
         <div class="wave-section-hdr"><span class="wave-pill wp-w3">Wave 3</span><div><div class="wave-section-title">Wave 3 &mdash; Full Rollout</div><div class="wave-section-sub">Light-touch IT support &middot; Departments largely self-serve</div></div></div>
@@ -386,12 +318,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="wd-item"><div class="wd-label">IT Support</div><div class="wd-val">Light &mdash; champions run onboarding using the established playbook</div></div>
           <div class="wd-item"><div class="wd-label">Goal</div><div class="wd-val">Complete org-wide coverage; Use Case Library at 25+ entries</div></div>
           <div class="wd-item"><div class="wd-label">Timeline</div><div class="wd-val">Begins when Wave 2 departments are activated</div></div>
-        </div>
-        <div class="wave-steps">
-          <div class="ws-item"><div class="ws-num">1</div><span>Champions use the playbook to run their own intro meetings</span></div>
-          <div class="ws-item"><div class="ws-num">2</div><span>IT Lead reviews plans but does not attend all intro meetings</span></div>
-          <div class="ws-item"><div class="ws-num">3</div><span>All departments contribute to and draw from the shared Use Case Library</span></div>
-          <div class="ws-item"><div class="ws-num">4</div><span>Quarterly program review replaces monthly for mature departments</span></div>
         </div>
       </div>
     </div>
@@ -402,19 +328,190 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="toast" id="toast"></div>
 
 <script>
-var depts = [];
+/* ── CONFIG ── */
+var SP_SITE = 'https://handyharman.sharepoint.com/sites/EmployeeResourcePortal/AICenterofExcellence';
+var LIST_NAME = 'AI%20Initiatives';
 
-var statusLabel={active:'Active',inprog:'In Progress',planned:'Planned',complete:'Complete'};
-var statusClass={active:'b-active',inprog:'b-inprog',planned:'b-planned',complete:'b-complete'};
-var _iniDeptId=null, _iniEditId=null, _deptEditId=null, _attachFaked=false;
+/* ── STATE ── */
+var depts = [];
+var _iniDeptId=null, _iniEditId=null, _deptEditId=null;
 var _idCounter=100;
+var _digest=null;
+var _saving=false;
 
 function uid(){return 'x'+(++_idCounter);}
-
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmtDate(d){if(!d)return '';var p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0];}
+function fmtDate(d){if(!d)return '';var p=d.split('T')[0].split('-');return p[2]+'.'+p[1]+'.'+p[0];}
+function isoDate(d){if(!d)return null;if(d.indexOf('T')>-1)return d.split('T')[0];return d;}
 
-/* ── counts ── */
+/* ── SYNC STATUS ── */
+var statusLabel={active:'Active',inprog:'In Progress',planned:'Planned',complete:'Complete'};
+var statusClass={active:'b-active',inprog:'b-inprog',planned:'b-planned',complete:'b-complete'};
+
+function setSyncStatus(state,msg){
+  var el=document.getElementById('sync-status');
+  el.className='sync-indicator '+state;
+  el.textContent=msg;
+}
+
+/* ── GET DIGEST ── */
+function getDigest(){
+  return fetch(SP_SITE+'/_api/contextinfo',{method:'POST',headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose'}})
+    .then(function(r){return r.json();})
+    .then(function(d){_digest=d.d.GetContextWebInformation.FormDigestValue;return _digest;});
+}
+
+/* ── LOAD DATA FROM SHAREPOINT ── */
+function loadFromSharePoint(){
+  setSyncStatus('syncing','&#8635; Loading...');
+  document.getElementById('dept-list').innerHTML='<div class="loading-bar"><div class="spinner"></div>Loading from SharePoint...</div>';
+  var url=SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items?$select=Id,Title,Department,Abbreviation,Champion,AILeader,Wave,InitiativeTitle,Description,Status,DueDate,DeptID,InitiativeID&$top=500&$orderby=Id';
+  fetch(url,{headers:{'Accept':'application/json;odata=verbose'}})
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
+    .then(function(data){
+      var items=data.d.results;
+      var deptMap={};
+      var deptOrder=[];
+      items.forEach(function(item){
+        var deptId=item.DeptID||('dept-'+item.Department.replace(/\s+/g,'').toLowerCase());
+        if(!deptMap[deptId]){
+          deptMap[deptId]={
+            id:deptId,
+            spId:item.Id,
+            abbr:item.Abbreviation||item.Department.substring(0,3).toUpperCase(),
+            name:item.Department,
+            champion:item.Champion||'',
+            aiLead:item.AILeader||'',
+            wave:item.Wave||'Pilot',
+            ini:[]
+          };
+          deptOrder.push(deptId);
+        }
+        if(item.InitiativeTitle){
+          deptMap[deptId].ini.push({
+            id:item.InitiativeID||('i-'+item.Id),
+            spId:item.Id,
+            title:item.InitiativeTitle,
+            leader:item.AILeader||'',
+            desc:item.Description||'',
+            status:item.Status||'planned',
+            due:isoDate(item.DueDate)||'',
+          });
+        }
+      });
+      depts=deptOrder.map(function(id){return deptMap[id];});
+      render();
+      setSyncStatus('synced','&#10003; Synced');
+    })
+    .catch(function(err){
+      setSyncStatus('error','&#10005; Error loading');
+      document.getElementById('dept-list').innerHTML='<div class="loading-bar" style="border-color:#B91C1C;background:#FEF2F2;color:#991B1B"><div class="spinner" style="border-top-color:#B91C1C"></div>Could not load from SharePoint. Check your connection and refresh.</div>';
+      console.error('Load error:',err);
+    });
+}
+
+/* ── SAVE DEPT TO SHAREPOINT ── */
+function saveDeptToSP(dept, isNew){
+  return getDigest().then(function(){
+    var body=JSON.stringify({
+      '__metadata':{'type':'SP.Data.AI_x0020_InitiativesListItem'},
+      'Title': dept.name,
+      'Department': dept.name,
+      'Abbreviation': dept.abbr,
+      'Champion': dept.champion,
+      'AILeader': dept.aiLead,
+      'Wave': dept.wave,
+      'DeptID': dept.id,
+      'InitiativeTitle': ''
+    });
+    if(isNew){
+      return fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items',{
+        method:'POST',
+        headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest},
+        body:body
+      }).then(function(r){return r.json();}).then(function(d){dept.spId=d.d.Id;return d;});
+    } else {
+      return fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items('+dept.spId+')',{
+        method:'POST',
+        headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest,'X-HTTP-Method':'MERGE','IF-MATCH':'*'},
+        body:body
+      });
+    }
+  });
+}
+
+/* ── SAVE INITIATIVE TO SHAREPOINT ── */
+function saveIniToSP(dept, ini, isNew){
+  return getDigest().then(function(){
+    var body=JSON.stringify({
+      '__metadata':{'type':'SP.Data.AI_x0020_InitiativesListItem'},
+      'Title': ini.title,
+      'Department': dept.name,
+      'Abbreviation': dept.abbr,
+      'Champion': dept.champion,
+      'AILeader': ini.leader,
+      'Wave': dept.wave,
+      'DeptID': dept.id,
+      'InitiativeID': ini.id,
+      'InitiativeTitle': ini.title,
+      'Description': ini.desc,
+      'Status': ini.status,
+      'DueDate': ini.due ? ini.due+'T00:00:00Z' : null
+    });
+    if(isNew){
+      return fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items',{
+        method:'POST',
+        headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest},
+        body:body
+      }).then(function(r){return r.json();}).then(function(d){ini.spId=d.d.Id;return d;});
+    } else {
+      return fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items('+ini.spId+')',{
+        method:'POST',
+        headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest,'X-HTTP-Method':'MERGE','IF-MATCH':'*'},
+        body:body
+      });
+    }
+  });
+}
+
+/* ── DELETE FROM SHAREPOINT ── */
+function deleteFromSP(spId){
+  return getDigest().then(function(){
+    return fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items('+spId+')',{
+      method:'POST',
+      headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest,'X-HTTP-Method':'DELETE','IF-MATCH':'*'}
+    });
+  });
+}
+
+/* ── UPDATE DEPT INFO ON ALL DEPT ROWS ── */
+function updateDeptRowsInSP(dept){
+  return getDigest().then(function(){
+    var promises=[];
+    if(dept.spId){
+      promises.push(fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items('+dept.spId+')',{
+        method:'POST',
+        headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest,'X-HTTP-Method':'MERGE','IF-MATCH':'*'},
+        body:JSON.stringify({'__metadata':{'type':'SP.Data.AI_x0020_InitiativesListItem'},'Department':dept.name,'Abbreviation':dept.abbr,'Champion':dept.champion,'AILeader':dept.aiLead,'Wave':dept.wave})
+      }));
+    }
+    dept.ini.forEach(function(ini){
+      if(ini.spId){
+        promises.push(fetch(SP_SITE+'/_api/web/lists/getbytitle(\'AI Initiatives\')/items('+ini.spId+')',{
+          method:'POST',
+          headers:{'Accept':'application/json;odata=verbose','Content-Type':'application/json;odata=verbose','X-RequestDigest':_digest,'X-HTTP-Method':'MERGE','IF-MATCH':'*'},
+          body:JSON.stringify({'__metadata':{'type':'SP.Data.AI_x0020_InitiativesListItem'},'Department':dept.name,'Abbreviation':dept.abbr,'Champion':dept.champion,'Wave':dept.wave})
+        }));
+      }
+    });
+    return Promise.all(promises);
+  });
+}
+
+/* ── COUNTS ── */
 function updateCounts(){
   var a=0,i=0,p=0,c=0,t=0;
   depts.forEach(function(d){d.ini.forEach(function(n){t++;if(n.status==='active')a++;else if(n.status==='inprog')i++;else if(n.status==='planned')p++;else if(n.status==='complete')c++;});});
@@ -440,115 +537,94 @@ function updateCounts(){
   waves.forEach(function(w){
     var wt=0,wa=0,wi=0,wc=0;
     w.list.forEach(function(d){d.ini.forEach(function(n){wt++;if(n.status==='active')wa++;else if(n.status==='inprog')wi++;else if(n.status==='complete')wc++;});});
-    whtml+='<div class="wave-row '+w.cls+'">'
-      +'<div><div class="wave-row-name">'+w.key+'</div><div class="wave-row-meta">'+w.list.length+' dept'+(w.list.length!==1?'s':'')+' &middot; '+wt+' initiative'+(wt!==1?'s':'')+'</div></div>'
-      +'<div class="wave-stats">'
-      +'<div class="wave-stat"><span class="wave-stat-n" style="color:#16A34A">'+wa+'</span><span class="wave-stat-l">Active</span></div>'
-      +'<div class="wave-stat"><span class="wave-stat-n" style="color:#D97706">'+wi+'</span><span class="wave-stat-l">In Prog</span></div>'
-      +'<div class="wave-stat"><span class="wave-stat-n" style="color:#0369A1">'+wc+'</span><span class="wave-stat-l">Done</span></div>'
-      +'</div>'
-      +'</div>';
+    whtml+='<div class="wave-row '+w.cls+'"><div><div class="wave-row-name">'+w.key+'</div><div class="wave-row-meta">'+w.list.length+' dept'+(w.list.length!==1?'s':'')+' &middot; '+wt+' initiative'+(wt!==1?'s':'')+'</div></div><div class="wave-stats"><div class="wave-stat"><span class="wave-stat-n" style="color:#16A34A">'+wa+'</span><span class="wave-stat-l">Active</span></div><div class="wave-stat"><span class="wave-stat-n" style="color:#D97706">'+wi+'</span><span class="wave-stat-l">In Prog</span></div><div class="wave-stat"><span class="wave-stat-n" style="color:#0369A1">'+wc+'</span><span class="wave-stat-l">Done</span></div></div></div>';
   });
   document.getElementById('wave-rows').innerHTML=whtml;
 }
 
-/* ── render ── */
+/* ── DEPT NAV ── */
+function renderNav(){
+  var el=document.getElementById('dept-nav');
+  if(!depts.length){el.innerHTML='<span class="dept-nav-empty">Add departments to see quick navigation here</span>';return;}
+  var html='<span class="dept-nav-label">Jump to:</span>';
+  depts.forEach(function(d){
+    html+='<button class="dept-nav-btn" onclick="jumpTo(\''+d.id+'\')"><span class="nav-abbr">'+esc(d.abbr)+'</span>'+esc(d.name)+'</button>';
+  });
+  el.innerHTML=html;
+}
+
+function jumpTo(deptId){
+  var card=document.getElementById('card-'+deptId);
+  if(!card)return;
+  card.classList.add('open');
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── RENDER ── */
 function render(){
   var el=document.getElementById('dept-list');
   var openIds={};
   el.querySelectorAll('.dept-card.open').forEach(function(c){openIds[c.id]=true;});
   el.innerHTML='';
+  if(!depts.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:#AAA;font-size:13px">No departments yet &mdash; click <b>+ Add Department</b> to get started.</div>';
+    updateCounts();renderNav();return;
+  }
   depts.forEach(function(dept){
     var rows='';
     dept.ini.forEach(function(n){
-      rows+='<div class="ini-row">'
-        +'<div><div class="ini-title">'+esc(n.title)+'</div><div class="ini-desc">'+esc(n.desc)+'</div></div>'
-        +'<div class="ini-leader">&#128100; '+esc(n.leader)+'</div>'
-        +'<div class="ini-due">'+fmtDate(n.due)+'</div>'
-        +'<span class="badge '+statusClass[n.status]+'">'+statusLabel[n.status]+'</span>'
-        +'<div class="ini-row-actions">'
-        +(n.clips>0?'<span class="clip" title="Attachment">&#128206;</span>':'')
-        +'<button class="icon-btn" title="Edit initiative" onclick="openIniModal(\''+dept.id+'\',\''+n.id+'\')">&#9998;</button>'
-        +'<button class="icon-btn del" title="Delete initiative" onclick="deleteIni(\''+dept.id+'\',\''+n.id+'\')">&#10005;</button>'
-        +'</div>'
-        +'</div>';
+      rows+='<div class="ini-row"><div><div class="ini-title">'+esc(n.title)+'</div><div class="ini-desc">'+esc(n.desc)+'</div></div><div class="ini-leader">&#128100; '+esc(n.leader)+'</div><div class="ini-due">'+fmtDate(n.due)+'</div><span class="badge '+statusClass[n.status]+'">'+statusLabel[n.status]+'</span><div class="ini-row-actions"><button class="icon-btn" title="Edit" onclick="openIniModal(\''+dept.id+'\',\''+n.id+'\')">&#9998;</button><button class="icon-btn del" title="Delete" onclick="deleteIni(\''+dept.id+'\',\''+n.id+'\')">&#10005;</button></div></div>';
     });
-    if(!rows) rows='<div class="ini-empty">No initiatives yet &mdash; use the button below to add one.</div>';
-
+    if(!rows)rows='<div class="ini-empty">No initiatives yet &mdash; use the button below to add one.</div>';
     var card=document.createElement('div');
     card.className='dept-card'+(openIds['card-'+dept.id]?' open':'');
     card.id='card-'+dept.id;
-    card.innerHTML=
-      '<div class="dept-hdr">'
-        +'<div class="dept-hdr-click" onclick="toggle(\''+dept.id+'\')">'
-          +'<div class="abbr">'+esc(dept.abbr)+'</div>'
-          +'<div class="dept-info">'
-            +'<div class="dept-name">'+esc(dept.name)+' <span class="dept-wave">&middot; '+esc(dept.wave)+'</span></div>'
-            +'<div class="dept-roles">Champion: <b>'+esc(dept.champion||'TBD')+'</b> &nbsp;&middot;&nbsp; AI Leader: <b>'+esc(dept.aiLead||'TBD')+'</b></div>'
-          +'</div>'
-          +'<div class="dept-meta">'
-            +'<span class="count-badge">'+dept.ini.length+' initiative'+(dept.ini.length!==1?'s':'')+'</span>'
-            +'<i class="chevron">&#8964;</i>'
-          +'</div>'
-        +'</div>'
-        +'<div class="dept-actions">'
-          +'<button class="icon-btn" title="Edit department" onclick="openDeptModal(\''+dept.id+'\')">&#9998; Edit</button>'
-          +'<button class="icon-btn del" title="Delete department" onclick="confirmDeleteDept(\''+dept.id+'\')">&#10005; Delete</button>'
-        +'</div>'
-      +'</div>'
-      +'<div class="dept-body" id="body-'+dept.id+'">'
-        +'<div id="del-confirm-'+dept.id+'"></div>'
-        +rows
-        +'<div class="add-bar"><button class="add-btn" onclick="openIniModal(\''+dept.id+'\',null)">&#43; Add Initiative</button></div>'
-      +'</div>';
+    card.innerHTML='<div class="dept-hdr"><div class="dept-hdr-click" onclick="toggle(\''+dept.id+'\')"><div class="abbr">'+esc(dept.abbr)+'</div><div class="dept-info"><div class="dept-name">'+esc(dept.name)+' <span class="dept-wave">&middot; '+esc(dept.wave)+'</span></div><div class="dept-roles">Champion: <b>'+esc(dept.champion||'TBD')+'</b> &nbsp;&middot;&nbsp; AI Leader: <b>'+esc(dept.aiLead||'TBD')+'</b></div></div><div class="dept-meta"><span class="count-badge">'+dept.ini.length+' initiative'+(dept.ini.length!==1?'s':'')+'</span><i class="chevron">&#8964;</i></div></div><div class="dept-actions"><button class="icon-btn" onclick="openDeptModal(\''+dept.id+'\')">&#9998; Edit</button><button class="icon-btn del" onclick="confirmDeleteDept(\''+dept.id+'\')">&#10005; Delete</button></div></div><div class="dept-body"><div id="del-confirm-'+dept.id+'"></div>'+rows+'<div class="add-bar"><button class="add-btn" onclick="openIniModal(\''+dept.id+'\',null)">&#43; Add Initiative</button></div></div>';
     el.appendChild(card);
   });
-  updateCounts();
-  renderNav();
+  updateCounts();renderNav();
 }
 
-function toggle(id){
-  var c=document.getElementById('card-'+id);
-  c.classList.toggle('open');
-}
+function toggle(id){document.getElementById('card-'+id).classList.toggle('open');}
 
-/* ── delete initiative ── */
+/* ── DELETE INITIATIVE ── */
 function deleteIni(deptId,iniId){
   var dept=depts.find(function(d){return d.id===deptId;});
-  dept.ini=dept.ini.filter(function(n){return n.id!==iniId;});
-  render();
-  showToast('Initiative removed');
+  var ini=dept.ini.find(function(n){return n.id===iniId;});
+  if(!ini)return;
+  setSyncStatus('syncing','&#8635; Saving...');
+  deleteFromSP(ini.spId).then(function(){
+    dept.ini=dept.ini.filter(function(n){return n.id!==iniId;});
+    render();
+    setSyncStatus('synced','&#10003; Synced');
+    showToast('Initiative removed');
+  }).catch(function(){setSyncStatus('error','&#10005; Error');showToast('Error removing initiative');});
 }
 
-/* ── confirm delete dept ── */
+/* ── CONFIRM DELETE DEPT ── */
 function confirmDeleteDept(deptId){
   var dept=depts.find(function(d){return d.id===deptId;});
-  var card=document.getElementById('card-'+deptId);
-  card.classList.add('open');
-  var box=document.getElementById('del-confirm-'+deptId);
-  box.innerHTML='<div class="del-confirm">'
-    +'<span>Delete <b>'+esc(dept.name)+'</b> and all its initiatives? This cannot be undone.</span>'
-    +'<div class="del-confirm-actions">'
-    +'<button class="btn-del-no" onclick="cancelDeleteDept(\''+deptId+'\')">Cancel</button>'
-    +'<button class="btn-del-yes" onclick="deleteDept(\''+deptId+'\')">Yes, Delete</button>'
-    +'</div></div>';
+  document.getElementById('card-'+deptId).classList.add('open');
+  document.getElementById('del-confirm-'+deptId).innerHTML='<div class="del-confirm"><span>Delete <b>'+esc(dept.name)+'</b> and all its initiatives?</span><div class="del-confirm-actions"><button class="btn-del-no" onclick="cancelDeleteDept(\''+deptId+'\')">Cancel</button><button class="btn-del-yes" onclick="deleteDept(\''+deptId+'\')">Yes, Delete</button></div></div>';
 }
-function cancelDeleteDept(deptId){
-  document.getElementById('del-confirm-'+deptId).innerHTML='';
-}
+function cancelDeleteDept(deptId){document.getElementById('del-confirm-'+deptId).innerHTML='';}
 function deleteDept(deptId){
   var dept=depts.find(function(d){return d.id===deptId;});
   var name=dept.name;
-  depts=depts.filter(function(d){return d.id!==deptId;});
-  render();
-  showToast(name+' deleted');
+  setSyncStatus('syncing','&#8635; Saving...');
+  var allIds=[dept.spId].concat(dept.ini.map(function(n){return n.spId;})).filter(Boolean);
+  var deleteAll=allIds.map(function(id){return deleteFromSP(id);});
+  Promise.all(deleteAll).then(function(){
+    depts=depts.filter(function(d){return d.id!==deptId;});
+    render();
+    setSyncStatus('synced','&#10003; Synced');
+    showToast(name+' deleted');
+  }).catch(function(){setSyncStatus('error','&#10005; Error');showToast('Error deleting department');});
 }
 
-/* ── initiative modal ── */
+/* ── INITIATIVE MODAL ── */
 function openIniModal(deptId,iniId){
-  _iniDeptId=deptId;
-  _iniEditId=iniId;
-  _attachFaked=false;
+  _iniDeptId=deptId;_iniEditId=iniId;
   var dept=depts.find(function(d){return d.id===deptId;});
   document.getElementById('m-dept').textContent=dept.name;
   if(iniId){
@@ -558,9 +634,7 @@ function openIniModal(deptId,iniId){
     document.getElementById('f-leader').value=ini.leader;
     document.getElementById('f-desc').value=ini.desc;
     document.getElementById('f-status').value=ini.status;
-    document.getElementById('f-due').value=ini.due||'';
-    document.getElementById('f-attach-names').textContent=ini.clips?'&#128206; Attachment present':'';
-    _attachFaked=ini.clips>0;
+    document.getElementById('f-due').value=isoDate(ini.due)||'';
   } else {
     document.getElementById('ini-modal-title').textContent='Add New AI Initiative';
     document.getElementById('f-title').value='';
@@ -568,17 +642,19 @@ function openIniModal(deptId,iniId){
     document.getElementById('f-desc').value='';
     document.getElementById('f-status').value='planned';
     document.getElementById('f-due').value='';
-    document.getElementById('f-attach-names').textContent='';
   }
   window.scrollTo(0,0);
   document.getElementById('ini-overlay').classList.add('on');
 }
 function closeIniModal(){document.getElementById('ini-overlay').classList.remove('on');_iniDeptId=null;_iniEditId=null;}
-function fakeAttach(){_attachFaked=!_attachFaked;document.getElementById('f-attach-names').textContent=_attachFaked?'&#128206; Document attached':'';}
+
 function saveIni(){
   var title=document.getElementById('f-title').value.trim();
   if(!title){document.getElementById('f-title').focus();return;}
   var dept=depts.find(function(d){return d.id===_iniDeptId;});
+  var btn=document.getElementById('ini-save-btn');
+  btn.disabled=true;btn.textContent='Saving...';
+  setSyncStatus('syncing','&#8635; Saving...');
   if(_iniEditId){
     var ini=dept.ini.find(function(n){return n.id===_iniEditId;});
     ini.title=title;
@@ -586,19 +662,25 @@ function saveIni(){
     ini.desc=document.getElementById('f-desc').value.trim();
     ini.status=document.getElementById('f-status').value;
     ini.due=document.getElementById('f-due').value;
-    ini.clips=_attachFaked?1:0;
-    closeIniModal();render();
-    document.getElementById('card-'+_iniDeptId) && document.getElementById('card-'+dept.id).classList.add('open');
-    showToast('"'+title+'" updated');
+    saveIniToSP(dept,ini,false).then(function(){
+      closeIniModal();render();
+      document.getElementById('card-'+dept.id).classList.add('open');
+      setSyncStatus('synced','&#10003; Synced');
+      showToast('"'+title+'" updated');
+    }).catch(function(){btn.disabled=false;btn.textContent='Save Initiative';setSyncStatus('error','&#10005; Error');showToast('Error saving');});
   } else {
-    dept.ini.push({id:uid(),title:title,leader:document.getElementById('f-leader').value.trim()||'TBD',desc:document.getElementById('f-desc').value.trim(),status:document.getElementById('f-status').value,due:document.getElementById('f-due').value,clips:_attachFaked?1:0});
-    closeIniModal();render();
-    document.getElementById('card-'+dept.id).classList.add('open');
-    showToast('"'+title+'" added to '+dept.name);
+    var newIni={id:uid(),spId:null,title:title,leader:document.getElementById('f-leader').value.trim()||'TBD',desc:document.getElementById('f-desc').value.trim(),status:document.getElementById('f-status').value,due:document.getElementById('f-due').value};
+    dept.ini.push(newIni);
+    saveIniToSP(dept,newIni,true).then(function(){
+      closeIniModal();render();
+      document.getElementById('card-'+dept.id).classList.add('open');
+      setSyncStatus('synced','&#10003; Synced');
+      showToast('"'+title+'" added to '+dept.name);
+    }).catch(function(){dept.ini.pop();btn.disabled=false;btn.textContent='Save Initiative';setSyncStatus('error','&#10005; Error');showToast('Error saving');});
   }
 }
 
-/* ── dept modal ── */
+/* ── DEPT MODAL ── */
 function openDeptModal(deptId){
   _deptEditId=deptId;
   if(deptId){
@@ -621,96 +703,52 @@ function openDeptModal(deptId){
   document.getElementById('dept-overlay').classList.add('on');
 }
 function closeDeptModal(){document.getElementById('dept-overlay').classList.remove('on');_deptEditId=null;}
+
 function saveDept(){
   var name=document.getElementById('d-name').value.trim();
   var abbr=document.getElementById('d-abbr').value.trim().toUpperCase();
   if(!name||!abbr){if(!name)document.getElementById('d-name').focus();else document.getElementById('d-abbr').focus();return;}
+  var btn=document.getElementById('dept-save-btn');
+  btn.disabled=true;btn.textContent='Saving...';
+  setSyncStatus('syncing','&#8635; Saving...');
   if(_deptEditId){
     var dept=depts.find(function(d){return d.id===_deptEditId;});
     dept.name=name;dept.abbr=abbr;
     dept.champion=document.getElementById('d-champion').value.trim();
     dept.aiLead=document.getElementById('d-ailead').value.trim();
     dept.wave=document.getElementById('d-wave').value;
-    closeDeptModal();render();
-    document.getElementById('card-'+dept.id).classList.add('open');
-    showToast(name+' updated');
+    updateDeptRowsInSP(dept).then(function(){
+      closeDeptModal();render();
+      document.getElementById('card-'+dept.id).classList.add('open');
+      setSyncStatus('synced','&#10003; Synced');
+      showToast(name+' updated');
+    }).catch(function(){btn.disabled=false;btn.textContent='Save Department';setSyncStatus('error','&#10005; Error');showToast('Error saving');});
   } else {
     var newId=uid();
-    depts.push({id:newId,abbr:abbr,name:name,champion:document.getElementById('d-champion').value.trim(),aiLead:document.getElementById('d-ailead').value.trim(),wave:document.getElementById('d-wave').value,ini:[]});
-    closeDeptModal();render();
-    document.getElementById('card-'+newId).classList.add('open');
-    showToast(name+' added');
+    var newDept={id:newId,spId:null,abbr:abbr,name:name,champion:document.getElementById('d-champion').value.trim(),aiLead:document.getElementById('d-ailead').value.trim(),wave:document.getElementById('d-wave').value,ini:[]};
+    depts.push(newDept);
+    saveDeptToSP(newDept,true).then(function(){
+      closeDeptModal();render();
+      document.getElementById('card-'+newId).classList.add('open');
+      setSyncStatus('synced','&#10003; Synced');
+      showToast(name+' added');
+    }).catch(function(){depts.pop();btn.disabled=false;btn.textContent='Save Department';setSyncStatus('error','&#10005; Error');showToast('Error saving');});
   }
 }
 
-/* ── wave guide ── */
+/* ── WAVE GUIDE ── */
 function openWaveGuide(){window.scrollTo(0,0);document.getElementById('wg-overlay').classList.add('on');}
 function closeWaveGuide(){document.getElementById('wg-overlay').classList.remove('on');}
 
-/* ── close on backdrop ── */
+/* ── CLOSE ON BACKDROP ── */
 ['ini-overlay','dept-overlay','wg-overlay'].forEach(function(id){
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
 });
 
-/* ── dept nav ── */
-function renderNav(){
-  var el=document.getElementById('dept-nav');
-  if(!depts.length){el.innerHTML='<span class="dept-nav-empty">Add departments to see quick navigation here</span>';return;}
-  var html='<span class="dept-nav-label">Jump to:</span>';
-  depts.forEach(function(d){
-    html+='<button class="dept-nav-btn" onclick="jumpTo(\''+d.id+'\')">'
-      +'<span class="nav-abbr">'+esc(d.abbr)+'</span>'
-      +esc(d.name)
-      +'</button>';
-  });
-  el.innerHTML=html;
-}
-
-function jumpTo(deptId){
-  var card=document.getElementById('card-'+deptId);
-  if(!card) return;
-  card.classList.add('open');
-  card.scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-
-function saveData(){
-  var data={version:1,savedAt:new Date().toISOString(),depts:depts};
-  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  var d=new Date();
-  a.download='ai-tracker-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  showToast('Data saved — check your Downloads folder');
-}
-function loadData(){
-  document.getElementById('load-file-input').click();
-}
-function handleFileLoad(e){
-  var file=e.target.files[0];
-  if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    try{
-      var data=JSON.parse(ev.target.result);
-      if(!data.depts||!Array.isArray(data.depts)) throw new Error('Invalid file');
-      depts=data.depts;
-      render();
-      showToast('Data loaded — '+depts.length+' departments restored');
-    } catch(err){
-      showToast('Could not load file — please use a valid AI Tracker save file');
-    }
-    e.target.value='';
-  };
-  reader.readAsText(file);
-}
-
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2600);}
 
-/* ── init ── */
-render();
+/* ── INIT ── */
+loadFromSharePoint();
 </script>
 </body>
 </html>
