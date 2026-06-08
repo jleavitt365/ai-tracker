@@ -11,17 +11,17 @@
   --black:#1A1A1A;--gray:#2C2C2C;--mid:#6B6B6B;
   --border:#E0E0E0;--bg:#F4F4F4;--white:#fff;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--black);font-size:14px;border:2px solid var(--black);border-radius:6px;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--black);font-size:14px}
 
 /* topbar */
-.topbar{background:var(--black);color:#fff;padding:9px 20px;display:flex;align-items:center;gap:10px}
+.topbar{background:var(--black);color:#fff;padding:9px 20px;display:flex;align-items:center;gap:10px;border:2px solid var(--black);border-bottom:none}
 .cross{width:22px;height:22px;background:var(--red);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .cross svg{width:12px;height:12px;fill:#fff}
 .topbar-title{font-size:13px;font-weight:500;letter-spacing:.02em}
 .topbar-sub{font-size:11px;color:#888;margin-left:auto}
 
 /* page header */
-.page-header{background:var(--red);padding:18px 22px 16px;border-bottom:4px solid var(--red-dark);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.page-header{background:var(--red);padding:18px 22px 16px;border-bottom:4px solid var(--red-dark);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;border-left:2px solid var(--black);border-right:2px solid var(--black)}
 .page-header-left h1{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.01em}
 .page-header-left p{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px}
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -31,7 +31,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .add-dept-btn:hover{background:#f0f0f0}
 
 /* dashboard panel */
-.dash-panel{background:#fff;border-bottom:1px solid var(--border);padding:16px 22px 14px}
+.dash-panel{background:#fff;border-bottom:1px solid var(--border);padding:16px 22px 14px;border-left:2px solid var(--black);border-right:2px solid var(--black)}
 .dash-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
 .kpi-card{background:#F7F7F7;border-radius:4px;padding:11px 13px;border-left:3px solid transparent}
 .kpi-card.kc-total{border-left-color:#1A1A1A}
@@ -69,7 +69,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wave-stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--mid)}
 
 /* content */
-.content{padding:14px 22px;display:flex;flex-direction:column;gap:10px}
+.content{padding:14px 22px;display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--black);border-right:2px solid var(--black);border-bottom:2px solid var(--black);border-radius:0 0 6px 6px}
 
 /* dept card */
 .dept-card{background:#fff;border:1px solid var(--border);border-radius:5px;overflow:visible}
@@ -187,7 +187,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="cross"><svg viewBox="0 0 12 12"><rect x="5" y="1" width="2" height="10"/><rect x="1" y="5" width="10" height="2"/></svg></div>
   <span class="topbar-title">AI Program Hub</span>
@@ -393,24 +392,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="toast" id="toast"></div>
 
 <script>
-var depts = [
-  {id:'qa',abbr:'QA',name:'Quality Assurance',champion:'Sandra Müller',aiLead:'Thomas Becker',wave:'Pilot',
-   ini:[
-    {id:'i1',title:'CAPA Summary Automation',leader:'Thomas Becker',desc:'Use Claude to draft CAPA summaries from audit data',status:'active',due:'2025-08-15',clips:1},
-    {id:'i2',title:'SOP First Draft Generator',leader:'Thomas Becker',desc:'Prompt workflow for generating SOPs from process notes',status:'inprog',due:'2025-09-01',clips:0}
-  ]},
-  {id:'ops',abbr:'OPS',name:'Operations',champion:'Marco Fontana',aiLead:'Lena Fischer',wave:'Pilot',
-   ini:[
-    {id:'i3',title:'Shift Report Automation',leader:'Lena Fischer',desc:'Auto-generate shift handover reports from log entries',status:'active',due:'2025-07-30',clips:2},
-    {id:'i4',title:'Maintenance Log Summarizer',leader:'Lena Fischer',desc:'Summarize equipment maintenance logs for weekly review',status:'planned',due:'2025-10-01',clips:0}
-  ]},
-  {id:'eng',abbr:'ENG',name:'Engineering',champion:'Reto Zimmermann',aiLead:'Claudia Huber',wave:'Wave 2',
-   ini:[
-    {id:'i5',title:'RFQ Response Drafts',leader:'Claudia Huber',desc:'Draft RFQ responses using standardized Claude prompts',status:'inprog',due:'2025-09-15',clips:1}
-  ]},
-  {id:'hr',abbr:'HR',name:'Human Resources',champion:'Natalie Schäfer',aiLead:'Erik Vonlanthen',wave:'Wave 2',ini:[]},
-  {id:'fin',abbr:'FIN',name:'Finance',champion:'Pierre Dupont',aiLead:'Jasmin Keller',wave:'Wave 3',ini:[]}
-];
+var depts = [];
 
 var statusLabel={active:'Active',inprog:'In Progress',planned:'Planned',complete:'Complete'};
 var statusClass={active:'b-active',inprog:'b-inprog',planned:'b-planned',complete:'b-complete'};
@@ -691,12 +673,10 @@ function handleFileLoad(e){
   reader.readAsText(file);
 }
 
-var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2600);}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2600);}
 
 /* ── init ── */
 render();
-document.getElementById('card-qa').classList.add('open');
-document.getElementById('card-ops').classList.add('open');
 </script>
 </body>
 </html>
