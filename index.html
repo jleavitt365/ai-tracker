@@ -191,8 +191,41 @@
   .save-dot.saving { background: #F59E0B; animation: pulse .8s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
+  /* ── SUMMARY CHARTS ── */
+  .summary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-panel { background: white; padding: 16px 24px; }
+  .summary-panel h3 { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-label { font-size: 11px; color: var(--text); width: 80px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
+  .bar-active { background: #10B981; }
+  .bar-inprog { background: #3B82F6; }
+  .bar-planned { background: #F59E0B; }
+  .bar-complete { background: #8B5CF6; }
+  .bar-num { font-size: 11px; font-weight: 600; color: var(--text); width: 20px; text-align: right; }
+  .bar-pct { font-size: 10px; color: var(--muted); width: 32px; text-align: right; }
+  .wave-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .wave-row:last-child { border-bottom: none; }
+  .wave-name { font-size: 12px; font-weight: 600; }
+  .wave-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .wave-stats { display: flex; gap: 16px; }
+  .wave-stat { text-align: center; }
+  .wave-stat .wn { font-size: 13px; font-weight: 700; }
+  .wave-stat .wl { font-size: 9px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+  .wn-active { color: #10B981; }
+  .wn-inprog { color: #3B82F6; }
+  .wn-done { color: #8B5CF6; }
+
   @media (max-width: 768px) {
     .kpi-row { grid-template-columns: repeat(3,1fr); }
+    .summary-row { grid-template-columns: 1fr; }
     .main { padding: 16px; }
     .modal { width: calc(100vw - 32px); }
   }
@@ -243,6 +276,20 @@
     <div class="kpi k-planned"><div class="num" id="kPlanned">0</div><div class="lbl">Planned</div></div>
     <div class="kpi k-complete"><div class="num" id="kComplete">0</div><div class="lbl">Complete</div></div>
     <div class="kpi k-depts"><div class="num" id="kDepts">0</div><div class="lbl">Departments</div></div>
+  </div>
+
+  <div class="summary-row" id="summaryRow">
+    <div class="summary-panel">
+      <h3>Initiative Status Breakdown</h3>
+      <div class="bar-row"><span class="bar-label">Active</span><div class="bar-track"><div class="bar-fill bar-active" id="barActive" style="width:0%"></div></div><span class="bar-num" id="barActiveN">0</span><span class="bar-pct" id="barActivePct">—</span></div>
+      <div class="bar-row"><span class="bar-label">In Progress</span><div class="bar-track"><div class="bar-fill bar-inprog" id="barInProg" style="width:0%"></div></div><span class="bar-num" id="barInProgN">0</span><span class="bar-pct" id="barInProgPct">—</span></div>
+      <div class="bar-row"><span class="bar-label">Planned</span><div class="bar-track"><div class="bar-fill bar-planned" id="barPlanned" style="width:0%"></div></div><span class="bar-num" id="barPlannedN">0</span><span class="bar-pct" id="barPlannedPct">—</span></div>
+      <div class="bar-row"><span class="bar-label">Complete</span><div class="bar-track"><div class="bar-fill bar-complete" id="barComplete" style="width:0%"></div></div><span class="bar-num" id="barCompleteN">0</span><span class="bar-pct" id="barCompletePct">—</span></div>
+    </div>
+    <div class="summary-panel">
+      <h3>Progress by Wave</h3>
+      <div id="waveBreakdown"></div>
+    </div>
   </div>
 
   <div class="main">
@@ -318,9 +365,9 @@
 // ── CONFIGURATION ──────────────────────────────────────────────
 // Replace these with your Azure values after IT sets them up
 const CONFIG = {
-  clientId: '38f12c91-210b-4798-98dd-2a76adae32ed',        // Azure App Registration → Application (client) ID
-  tenantId: 'ba8a1e7a-030e-4c67-8ba6-9743517631d1',        // Azure AD → Tenant ID
-  apiUrl:   'https://nice-bay-0dd1e7f0f.7.azurestaticapps.net/api',          // Azure Static Web Apps API URL (filled after deploy)
+  clientId: 'YOUR_CLIENT_ID',        // Azure App Registration → Application (client) ID
+  tenantId: 'YOUR_TENANT_ID',        // Azure AD → Tenant ID
+  apiUrl:   'YOUR_API_URL',          // Azure Static Web Apps API URL (filled after deploy)
 };
 // ───────────────────────────────────────────────────────────────
 
@@ -463,6 +510,39 @@ function updateKPIs() {
   document.getElementById('kPlanned').textContent = pl;
   document.getElementById('kComplete').textContent = co;
   document.getElementById('kDepts').textContent = state.depts.length;
+
+  // Status breakdown bars
+  const pct = n => t > 0 ? Math.round(n/t*100) : 0;
+  const setPct = (id, n) => {
+    const bar = document.getElementById('bar'+id);
+    const num = document.getElementById('bar'+id+'N');
+    const pctEl = document.getElementById('bar'+id+'Pct');
+    if(bar) bar.style.width = pct(n)+'%';
+    if(num) num.textContent = n;
+    if(pctEl) pctEl.textContent = t>0 ? pct(n)+'%' : '—';
+  };
+  setPct('Active',a); setPct('InProg',ip); setPct('Planned',pl); setPct('Complete',co);
+
+  // Wave breakdown
+  const waves = ['Pilot','Wave 2','Wave 3'];
+  const wb = document.getElementById('waveBreakdown');
+  if(wb) {
+    wb.innerHTML = waves.map(w => {
+      const depts = state.depts.filter(d => d.wave===w);
+      const inits = depts.flatMap(d => d.initiatives||[]);
+      const wa = inits.filter(i=>i.status==='Active').length;
+      const wi = inits.filter(i=>i.status==='In Progress').length;
+      const wc = inits.filter(i=>i.status==='Complete').length;
+      return '<div class="wave-row">'
+        +'<div><div class="wave-name">'+w+'</div>'
+        +'<div class="wave-sub">'+depts.length+' dept'+(depts.length!==1?'s':'')+' · '+inits.length+' initiative'+(inits.length!==1?'s':'')+' </div></div>'
+        +'<div class="wave-stats">'
+          +'<div class="wave-stat"><div class="wn wn-active">'+wa+'</div><div class="wl">Active</div></div>'
+          +'<div class="wave-stat"><div class="wn wn-inprog">'+wi+'</div><div class="wl">In Prog</div></div>'
+          +'<div class="wave-stat"><div class="wn wn-done">'+wc+'</div><div class="wl">Done</div></div>'
+        +'</div></div>';
+    }).join('');
+  }
 }
 
 function render() {
