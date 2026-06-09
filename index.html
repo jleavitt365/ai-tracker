@@ -3,23 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Program Hub — OMG</title>
+<title>AI Center of Excellence — OMG</title>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 <style>
   :root {
     --red: #C8102E;
     --red-dark: #9e0d24;
     --black: #111111;
-    --offwhite: #F7F7F7;
+    --offwhite: #F0F2F5;
     --border: #E2E2E2;
     --text: #1A1A1A;
     --muted: #777;
     --white: #ffffff;
     --font: 'Segoe UI', system-ui, sans-serif;
     --radius: 3px;
+    --card-bg: #ffffff;
+    --page-bg: #ECEEF2;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); background: var(--offwhite); color: var(--text); min-height: 100vh; }
+  body {
+    font-family: var(--font);
+    background: var(--page-bg);
+    background-image:
+      radial-gradient(ellipse at 0% 0%, rgba(200,16,46,.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(17,17,17,.05) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+  }
 
   /* ── LOGIN SCREEN ── */
   #loginScreen {
@@ -73,7 +84,7 @@
   /* ── APP SHELL ── */
   #appShell { display: none; }
   .topnav {
-    background: var(--black);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
     padding: 0 28px;
     display: flex;
     align-items: center;
@@ -94,13 +105,14 @@
 
   /* ── HEADER BAR ── */
   .header-bar {
-    background: var(--red);
+    background: linear-gradient(135deg, var(--red) 0%, #9e0d24 100%);
     padding: 14px 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
+    box-shadow: 0 2px 8px rgba(200,16,46,.25);
   }
   .header-bar h2 { color: white; font-size: 14px; font-weight: 600; }
   .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -113,8 +125,9 @@
   .kpi-row {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%);
     border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
   }
   .kpi { padding: 16px 12px; text-align: center; border-right: 1px solid var(--border); position: relative; }
   .kpi:last-child { border-right: none; }
@@ -129,16 +142,21 @@
 
   /* ── MAIN CONTENT ── */
   .main { padding: 20px 28px; max-width: 1200px; }
+  .main-inner {
+    background: linear-gradient(180deg, rgba(200,16,46,.03) 0%, transparent 120px);
+    border-radius: 6px;
+  }
 
   /* ── EMPTY STATE ── */
-  .empty-state { background: white; border: 2px dashed var(--border); border-radius: 4px; padding: 48px; text-align: center; margin-top: 4px; }
+  .empty-state { background: linear-gradient(135deg, #ffffff 0%, #f5f6f8 100%); border: 2px dashed var(--border); border-radius: 8px; padding: 48px; text-align: center; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
   .empty-state h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--black); }
   .empty-state p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
   .btn-red { background: var(--red); color: white; border: none; padding: 10px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: background .15s; }
   .btn-red:hover { background: var(--red-dark); }
 
   /* ── DEPT CARDS ── */
-  .dept-card { background: white; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+  .dept-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 0 transparent; transition: box-shadow .2s; }
+  .dept-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.10); }
   .dept-head { display: flex; justify-content: space-between; align-items: center; padding: 13px 18px; cursor: pointer; border-left: 4px solid var(--red); transition: background .1s; }
   .dept-head:hover { background: #fafafa; }
   .dept-name { font-weight: 600; font-size: 14px; }
@@ -199,7 +217,7 @@
     background: var(--border);
     border-bottom: 1px solid var(--border);
   }
-  .summary-panel { background: white; padding: 16px 24px; }
+  .summary-panel { background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%); padding: 16px 24px; }
   .summary-panel h3 { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
   .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .bar-label { font-size: 11px; color: var(--text); width: 80px; flex-shrink: 0; }
@@ -223,6 +241,98 @@
   .wn-inprog { color: #3B82F6; }
   .wn-done { color: #8B5CF6; }
 
+  /* ── DEPT INITIATIVE COUNT WIDGET ── */
+  .dept-count-widget {
+    background: white;
+    border-left: 1px solid var(--border);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .dept-count-widget::-webkit-scrollbar { display: none; }
+  .dept-count-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px 3px 10px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8f9fb, #eceef2);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .dept-count-chip .chip-name {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .dept-count-chip .chip-num {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 1px 6px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .dept-count-chip .chip-num.zero {
+    background: #ccc;
+  }
+
+  /* ── DEPT NAV BAR ── */
+  .dept-nav {
+    background: linear-gradient(90deg, #f8f9fb 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 52px;
+    z-index: 90;
+    min-height: 40px;
+  }
+  .dept-nav::-webkit-scrollbar { display: none; }
+  .dept-nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .dept-nav-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-family: var(--font);
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+  .dept-nav-btn:hover {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+  }
+  .dept-nav-empty {
+    font-size: 11px;
+    color: #ccc;
+    font-style: italic;
+  }
+
   @media (max-width: 768px) {
     .kpi-row { grid-template-columns: repeat(3,1fr); }
     .summary-row { grid-template-columns: 1fr; }
@@ -236,8 +346,15 @@
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
   <div class="login-card">
-    <div class="login-logo">🤖</div>
-    <h1>AI Program Hub</h1>
+    <div class="login-logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="12" cy="12" rx="10" ry="4" stroke="white" stroke-width="1.5" fill="none"/>
+        <ellipse cx="12" cy="12" rx="10" ry="4" stroke="white" stroke-width="1.5" fill="none" transform="rotate(60 12 12)"/>
+        <ellipse cx="12" cy="12" rx="10" ry="4" stroke="white" stroke-width="1.5" fill="none" transform="rotate(120 12 12)"/>
+        <circle cx="12" cy="12" r="2" fill="white"/>
+      </svg>
+    </div>
+    <h1>AI Center of Excellence</h1>
     <p>Track your organization's AI initiatives across all departments and waves. Sign in with your OMG Microsoft account to continue.</p>
     <button class="btn-ms" onclick="signIn()">
       <svg width="18" height="18" viewBox="0 0 21 21" fill="none"><rect width="10" height="10" fill="#F25022"/><rect x="11" width="10" height="10" fill="#7FBA00"/><rect y="11" width="10" height="10" fill="#00A4EF"/><rect x="11" y="11" width="10" height="10" fill="#FFB900"/></svg>
@@ -251,8 +368,15 @@
 <div id="appShell">
   <nav class="topnav">
     <div class="topnav-left">
-      <div class="nav-logo">🤖</div>
-      <span class="nav-title">AI Program Hub</span>
+      <div class="nav-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="12" cy="12" rx="10" ry="4" stroke="white" stroke-width="1.5" fill="none"/>
+          <ellipse cx="12" cy="12" rx="10" ry="4" stroke="white" stroke-width="1.5" fill="none" transform="rotate(60 12 12)"/>
+          <ellipse cx="12" cy="12" rx="10" ry="4" stroke="white" stroke-width="1.5" fill="none" transform="rotate(120 12 12)"/>
+          <circle cx="12" cy="12" r="2" fill="white"/>
+        </svg>
+      </div>
+      <span class="nav-title">AI Center of Excellence</span>
     </div>
     <div class="topnav-right">
       <div class="save-indicator"><div class="save-dot" id="saveDot"></div><span id="saveLabel">All changes saved</span></div>
@@ -290,6 +414,13 @@
       <h3>Progress by Wave</h3>
       <div id="waveBreakdown"></div>
     </div>
+  </div>
+
+  <div class="dept-nav" id="deptNav">
+    <span class="dept-nav-label">Jump to:</span>
+    <span class="dept-nav-empty" id="deptNavEmpty">No departments yet</span>
+    <div style="flex:1"></div>
+    <div class="dept-count-widget" id="deptCountWidget"></div>
   </div>
 
   <div class="main">
@@ -331,12 +462,13 @@
   <div class="modal">
     <h2 id="initModalTitle">Add Initiative</h2>
     <div class="fg"><label>Initiative Title *</label><input id="iTitle" placeholder="e.g. SOP Drafting Automation"></div>
-    <div class="fg"><label>AI Leader</label><input id="iLeader" placeholder="Full name"></div>
+    <div class="fg"><label>Owner</label><input id="iLeader" placeholder="Full name"></div>
     <div class="fg"><label>Description</label><textarea id="iDesc" placeholder="What problem does this solve? What does Claude do?"></textarea></div>
     <div class="fg"><label>Status</label>
       <select id="iStatus"><option>Planned</option><option>In Progress</option><option>Active</option><option>Complete</option></select>
     </div>
     <div class="fg"><label>Time Saved (estimate)</label><input id="iTime" placeholder="e.g. 2 hrs per week"></div>
+    <div class="fg"><label>Time Saved (actual)</label><input id="iTimeActual" placeholder="e.g. 1.5 hrs per week"></div>
     <div class="fg"><label>Expected Due Date</label><input type="date" id="iDue"></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal('initModal')">Cancel</button>
@@ -570,6 +702,7 @@ function render() {
         <td style="max-width:200px;color:var(--muted);font-size:11px">${esc(ini.desc||'')}</td>
         <td><span class="pill ${pc}">${ini.status}</span></td>
         <td>${ini.timeSaved ? esc(ini.timeSaved) : '—'}</td>
+        <td>${ini.timeActual ? esc(ini.timeActual) : '—'}</td>
         <td>${ini.due||'—'}</td>
         <td><span class="by-line">${esc(ini.addedBy||'')}</span></td>
         <td><span class="edit-link" onclick="editInit(${di},${ii})">Edit</span></td>
@@ -578,6 +711,7 @@ function render() {
 
     const card = document.createElement('div');
     card.className = 'dept-card';
+    card.id = 'dept-anchor-' + di;
     card.innerHTML = `
       <div class="dept-head" onclick="toggleDept(${di})">
         <div>
@@ -603,8 +737,8 @@ function render() {
         ${inits.length > 0
           ? `<table class="tbl">
               <thead><tr>
-                <th>Initiative</th><th>AI Leader</th><th>Description</th>
-                <th>Status</th><th>Time Saved</th><th>Due Date</th><th>Added By</th><th></th>
+                <th>Initiative</th><th>Owner</th><th>Description</th>
+                <th>Status</th><th>Est. Time Saved</th><th>Act. Time Saved</th><th>Due Date</th><th>Added By</th><th></th>
               </tr></thead>
               <tbody>${rows}</tbody>
              </table>`
@@ -614,6 +748,77 @@ function render() {
     list.appendChild(card);
   });
   updateKPIs();
+  updateDeptNav();
+}
+
+async function deleteDept(i) {
+  if (!confirm('Delete department "' + state.depts[i].name + '" and all its initiatives? This cannot be undone.')) return;
+  state.depts.splice(i, 1);
+  render();
+  await saveData();
+  showToast('Department deleted');
+}
+
+async function deleteInit(di, ii) {
+  const ini = state.depts[di].initiatives[ii];
+  if (!confirm('Delete initiative "' + ini.title + '"? This cannot be undone.')) return;
+  state.depts[di].initiatives.splice(ii, 1);
+  render();
+  document.getElementById('ib'+di)?.classList.add('open');
+  document.getElementById('chev'+di)?.classList.add('open');
+  await saveData();
+  showToast('Initiative deleted');
+}
+
+function updateDeptNav() {
+  const nav = document.getElementById('deptNav');
+  const empty = document.getElementById('deptNavEmpty');
+  const widget = document.getElementById('deptCountWidget');
+  if (!nav) return;
+
+  // Remove old nav buttons (keep label, empty msg, spacer, widget)
+  nav.querySelectorAll('.dept-nav-btn').forEach(b => b.remove());
+
+  if (state.depts.length === 0) {
+    if (empty) empty.style.display = '';
+    if (widget) widget.innerHTML = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  // Add jump buttons
+  const spacer = document.getElementById('deptNav').querySelector('div[style]');
+  state.depts.forEach((dept, di) => {
+    const btn = document.createElement('button');
+    btn.className = 'dept-nav-btn';
+    btn.textContent = dept.name;
+    btn.onclick = () => {
+      const el = document.getElementById('dept-anchor-' + di);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const tb = document.getElementById('ib' + di);
+        const ch = document.getElementById('chev' + di);
+        if (tb && !tb.classList.contains('open')) {
+          tb.classList.add('open');
+          if (ch) ch.classList.add('open');
+        }
+      }
+    };
+    // Insert before the spacer div
+    if (spacer) nav.insertBefore(btn, spacer);
+    else nav.appendChild(btn);
+  });
+
+  // Update initiative count chips
+  if (widget) {
+    widget.innerHTML = state.depts.map((dept, di) => {
+      const count = (dept.initiatives || []).length;
+      return '<div class="dept-count-chip" style="cursor:pointer" onclick="document.getElementById('dept-anchor-'+'+di+').scrollIntoView({behavior:'smooth',block:'start'})">'
+        + '<span class="chip-name">' + esc(dept.name) + '</span>'
+        + '<span class="chip-num' + (count === 0 ? ' zero' : '') + '">' + count + '</span>'
+        + '</div>';
+    }).join('');
+  }
 }
 
 function toggleDept(i) {
@@ -673,7 +878,7 @@ async function saveDept() {
 function openAddInit(di) {
   state.activeDI = di; state.editII = null;
   document.getElementById('initModalTitle').textContent = 'Add Initiative';
-  ['iTitle','iLeader','iDesc','iTime','iDue'].forEach(id => document.getElementById(id).value = '');
+  ['iTitle','iLeader','iDesc','iTime','iTimeActual','iDue'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('iStatus').value = 'Planned';
   document.getElementById('initModal').classList.add('open');
 }
@@ -687,6 +892,7 @@ function editInit(di, ii) {
   document.getElementById('iDesc').value = ini.desc||'';
   document.getElementById('iStatus').value = ini.status;
   document.getElementById('iTime').value = ini.timeSaved||'';
+  document.getElementById('iTimeActual').value = ini.timeActual||'';
   document.getElementById('iDue').value = ini.due||'';
   document.getElementById('initModal').classList.add('open');
 }
@@ -699,6 +905,7 @@ async function saveInit() {
     desc: document.getElementById('iDesc').value.trim(),
     status: document.getElementById('iStatus').value,
     timeSaved: document.getElementById('iTime').value.trim(),
+    timeActual: document.getElementById('iTimeActual').value.trim(),
     due: document.getElementById('iDue').value,
     addedBy: currentUser?.name || currentUser?.username,
     addedAt: state.editII !== null ? state.depts[state.activeDI].initiatives[state.editII].addedAt : new Date().toISOString()
@@ -729,3 +936,4 @@ document.querySelectorAll('.overlay').forEach(o => {
 </script>
 </body>
 </html>
+
