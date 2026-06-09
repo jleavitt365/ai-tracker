@@ -1,0 +1,9 @@
+{
+  "name": "ai-tracker-api",
+  "version": "1.0.0",
+  "description": "Azure Functions API for AI Program Hub",
+  "main": "index.js",
+  "dependencies": {
+    "@azure/data-tables": "^13.2.2"
+  }
+}
