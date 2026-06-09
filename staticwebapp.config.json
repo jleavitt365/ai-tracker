@@ -1,0 +1,30 @@
+{
+  "routes": [
+    {
+      "route": "/api/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/*",
+      "allowedRoles": ["authenticated"],
+      "redirect": "/.auth/login/aad"
+    }
+  ],
+  "auth": {
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/ba8a1e7a-030e-4c67-8ba6-9743517631d1/v2.0",
+          "clientIdSettingName": "AZURE_CLIENT_ID",
+          "clientSecretSettingName": "AZURE_CLIENT_SECRET"
+        }
+      }
+    }
+  },
+  "globalHeaders": {
+    "Cache-Control": "no-cache"
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  }
+}
