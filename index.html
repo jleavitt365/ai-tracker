@@ -179,6 +179,11 @@
   .tbl tr:last-child td { border-bottom: none; }
   .tbl tr:hover td { background: #fafafa; }
   .pill { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; display: inline-block; }
+  /* AI Tool pills */
+  .tool-claude{background:#D946EF22;color:#7C3AED;border:1px solid #D946EF44;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap}
+  .tool-copilot{background:#0078D422;color:#0078D4;border:1px solid #0078D444;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap}
+  .tool-gemini{background:#1A73E822;color:#1A73E8;border:1px solid #1A73E844;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap}
+  .tool-chatgpt{background:#10A37F22;color:#10A37F;border:1px solid #10A37F44;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600;white-space:nowrap}
   .pActive{background:#D1FAE5;color:#065F46} .pIn-Progress{background:#DBEAFE;color:#1E40AF} .pPlanned{background:#FEF3C7;color:#92400E} .pComplete{background:#E5E7EB;color:#374151}
   .by-line { font-size: 10px; color: #aaa; }
   .no-inits { font-size: 12px; color: var(--muted); padding: 12px 0; }
@@ -241,31 +246,52 @@
   .wn-inprog { color: #3B82F6; }
   .wn-done { color: #8B5CF6; }
 
-  /* ── DEPT INITIATIVE COUNT WIDGET ── */
+  /* ── DEPT LEADERBOARD WIDGET ── */
   .dept-count-widget {
     background: white;
     border-left: 1px solid var(--border);
-    padding: 0 16px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
     overflow-x: auto;
     scrollbar-width: none;
   }
   .dept-count-widget::-webkit-scrollbar { display: none; }
+  .dept-lb-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-right: 4px;
+    flex-shrink: 0;
+  }
   .dept-count-chip {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 8px 3px 10px;
+    gap: 4px;
+    padding: 3px 8px;
     border-radius: 12px;
     background: linear-gradient(135deg, #f8f9fb, #eceef2);
     border: 1px solid var(--border);
     font-size: 11px;
     white-space: nowrap;
     flex-shrink: 0;
+    cursor: pointer;
+    transition: all .15s;
   }
+  .dept-count-chip:hover { border-color: var(--red); background: white; }
+  .dept-count-chip .chip-rank {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--muted);
+    width: 14px;
+  }
+  .chip-rank.r1 { color: #F59E0B; }
+  .chip-rank.r2 { color: #9CA3AF; }
+  .chip-rank.r3 { color: #CD7C2F; }
   .dept-count-chip .chip-name {
     color: var(--text);
     font-weight: 500;
@@ -280,9 +306,8 @@
     min-width: 18px;
     text-align: center;
   }
-  .dept-count-chip .chip-num.zero {
-    background: #ccc;
-  }
+  .dept-count-chip .chip-num.zero { background: #ccc; }
+  .chip-trend { font-size: 10px; }
 
   /* ── DEPT NAV BAR ── */
   .dept-nav {
@@ -467,6 +492,15 @@
     <div class="fg"><label>Status</label>
       <select id="iStatus"><option>Planned</option><option>In Progress</option><option>Active</option><option>Complete</option></select>
     </div>
+    <div class="fg"><label>AI Tool</label>
+      <select id="iAITool">
+        <option value="">-- Select Tool --</option>
+        <option>Claude</option>
+        <option>CoPilot</option>
+        <option>Gemini</option>
+        <option>ChatGPT</option>
+      </select>
+    </div>
     <div class="fg"><label>Time Saved (estimate)</label><input id="iTime" placeholder="e.g. 2 hrs per week"></div>
     <div class="fg"><label>Time Saved (actual)</label><input id="iTimeActual" placeholder="e.g. 1.5 hrs per week"></div>
     <div class="fg"><label>Expected Due Date</label><input type="date" id="iDue"></div>
@@ -501,7 +535,6 @@ const CONFIG = {
   tenantId: 'ba8a1e7a-030e-4c67-8ba6-9743517631d1',
   apiUrl:   'https://nice-bay-0dd1e7f0f.7.azurestaticapps.net/api',
 };
-
 // ───────────────────────────────────────────────────────────────
 
 // ── MSAL AUTH ──
@@ -700,7 +733,8 @@ function render() {
       return `<tr>
         <td><strong>${esc(ini.title)}</strong></td>
         <td>${esc(ini.leader||'—')}</td>
-        <td style="max-width:200px;color:var(--muted);font-size:11px">${esc(ini.desc||'')}</td>
+        <td>${ini.aiTool ? '<span class="tool-'+ini.aiTool.toLowerCase().replace(/[^a-z]/g,'')+'">' + esc(ini.aiTool) + '</span>' : '—'}</td>
+        <td style="max-width:180px;color:var(--muted);font-size:11px">${esc(ini.desc||'')}</td>
         <td><span class="pill ${pc}">${ini.status}</span></td>
         <td>${ini.timeSaved ? esc(ini.timeSaved) : '—'}</td>
         <td>${ini.timeActual ? esc(ini.timeActual) : '—'}</td>
@@ -739,8 +773,8 @@ function render() {
         ${inits.length > 0
           ? `<table class="tbl">
               <thead><tr>
-                <th>Initiative</th><th>Owner</th><th>Description</th>
-                <th>Status</th><th>Est. Time Saved</th><th>Act. Time Saved</th><th>Due Date</th><th>Added By</th><th></th>
+                <th>Initiative</th><th>Owner</th><th>AI Tool</th><th>Description</th>
+                <th>Status</th><th>Est. Saved</th><th>Act. Saved</th><th>Due Date</th><th>Added By</th><th></th>
               </tr></thead>
               <tbody>${rows}</tbody>
              </table>`
@@ -772,13 +806,25 @@ async function deleteInit(di, ii) {
   showToast('Initiative deleted');
 }
 
+function jumpToDept(di) {
+  const el = document.getElementById('dept-anchor-' + di);
+  if (!el) return;
+  // Scroll with offset for sticky bars (~52px topnav + 40px dept-nav = 92px)
+  const top = el.getBoundingClientRect().top + window.scrollY - 96;
+  window.scrollTo({ top, behavior: 'smooth' });
+  // Toggle open/close
+  const tb = document.getElementById('ib' + di);
+  const ch = document.getElementById('chev' + di);
+  if (tb) tb.classList.toggle('open');
+  if (ch) ch.classList.toggle('open');
+}
+
 function updateDeptNav() {
   const nav = document.getElementById('deptNav');
   const empty = document.getElementById('deptNavEmpty');
   const widget = document.getElementById('deptCountWidget');
   if (!nav) return;
 
-  // Remove old nav buttons (keep label, empty msg, spacer, widget)
   nav.querySelectorAll('.dept-nav-btn').forEach(b => b.remove());
 
   if (state.depts.length === 0) {
@@ -788,36 +834,36 @@ function updateDeptNav() {
   }
   if (empty) empty.style.display = 'none';
 
-  // Add jump buttons
-  const spacer = document.getElementById('deptNav').querySelector('div[style]');
+  // Add jump/toggle buttons
+  const spacer = nav.querySelector('div[style]');
   state.depts.forEach((dept, di) => {
     const btn = document.createElement('button');
     btn.className = 'dept-nav-btn';
     btn.textContent = dept.name;
-    btn.onclick = () => {
-      const el = document.getElementById('dept-anchor-' + di);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        const tb = document.getElementById('ib' + di);
-        const ch = document.getElementById('chev' + di);
-        if (tb && !tb.classList.contains('open')) {
-          tb.classList.add('open');
-          if (ch) ch.classList.add('open');
-        }
-      }
-    };
-    // Insert before the spacer div
+    btn.onclick = () => jumpToDept(di);
     if (spacer) nav.insertBefore(btn, spacer);
     else nav.appendChild(btn);
   });
 
-  // Update initiative count chips
+  // Leaderboard widget — sorted by initiative count descending
   if (widget) {
-    widget.innerHTML = state.depts.map((dept, di) => {
-      const count = (dept.initiatives || []).length;
-      return '<div class="dept-count-chip" style="cursor:pointer" onclick="document.getElementById(\'dept-anchor-\'+'+di+').scrollIntoView({behavior:\'smooth\',block:\'start\'})">'
-        + '<span class="chip-name">' + esc(dept.name) + '</span>'
-        + '<span class="chip-num' + (count === 0 ? ' zero' : '') + '">' + count + '</span>'
+    const ranked = state.depts
+      .map((dept, di) => ({ name: dept.name, count: (dept.initiatives||[]).length, di }))
+      .sort((a, b) => b.count - a.count);
+
+    const prevCounts = widget._prevCounts || {};
+    widget._prevCounts = {};
+    ranked.forEach(d => widget._prevCounts[d.name] = d.count);
+
+    widget.innerHTML = '<span class="dept-lb-label">Initiatives:</span>' + ranked.map((d, ri) => {
+      const rankCls = ri === 0 ? 'r1' : ri === 1 ? 'r2' : ri === 2 ? 'r3' : '';
+      const prev = prevCounts[d.name];
+      const trend = prev === undefined ? '' : d.count > prev ? '<span class="chip-trend">▲</span>' : d.count < prev ? '<span class="chip-trend" style="color:#ccc">▼</span>' : '';
+      return '<div class="dept-count-chip" onclick="jumpToDept(' + d.di + ')">'
+        + '<span class="chip-rank ' + rankCls + '">' + (ri+1) + '</span>'
+        + '<span class="chip-name">' + esc(d.name) + '</span>'
+        + '<span class="chip-num' + (d.count === 0 ? ' zero' : '') + '">' + d.count + '</span>'
+        + trend
         + '</div>';
     }).join('');
   }
@@ -880,7 +926,7 @@ async function saveDept() {
 function openAddInit(di) {
   state.activeDI = di; state.editII = null;
   document.getElementById('initModalTitle').textContent = 'Add Initiative';
-  ['iTitle','iLeader','iDesc','iTime','iTimeActual','iDue'].forEach(id => document.getElementById(id).value = '');
+  ['iTitle','iLeader','iDesc','iAITool','iTime','iTimeActual','iDue'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('iStatus').value = 'Planned';
   document.getElementById('initModal').classList.add('open');
 }
@@ -893,6 +939,7 @@ function editInit(di, ii) {
   document.getElementById('iLeader').value = ini.leader||'';
   document.getElementById('iDesc').value = ini.desc||'';
   document.getElementById('iStatus').value = ini.status;
+  document.getElementById('iAITool').value = ini.aiTool||'';
   document.getElementById('iTime').value = ini.timeSaved||'';
   document.getElementById('iTimeActual').value = ini.timeActual||'';
   document.getElementById('iDue').value = ini.due||'';
@@ -906,6 +953,7 @@ async function saveInit() {
     title, leader: document.getElementById('iLeader').value.trim(),
     desc: document.getElementById('iDesc').value.trim(),
     status: document.getElementById('iStatus').value,
+    aiTool: document.getElementById('iAITool').value,
     timeSaved: document.getElementById('iTime').value.trim(),
     timeActual: document.getElementById('iTimeActual').value.trim(),
     due: document.getElementById('iDue').value,
