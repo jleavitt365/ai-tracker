@@ -247,67 +247,84 @@
   .wn-done { color: #8B5CF6; }
 
   /* ── DEPT LEADERBOARD WIDGET ── */
-  .dept-count-widget {
+  .dept-count-widget { display: none; } /* hidden — leaderboard is now a sidebar */
+
+  /* ── PAGE LAYOUT WITH LEADERBOARD SIDEBAR ── */
+  .page-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+  .main {
+    padding: 20px 28px;
+    flex: 1;
+    min-width: 0;
+  }
+  .leaderboard-sidebar {
+    width: 200px;
+    flex-shrink: 0;
     background: white;
     border-left: 1px solid var(--border);
-    padding: 0 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
+    position: sticky;
+    top: 92px;
+    max-height: calc(100vh - 92px);
+    overflow-y: auto;
+    padding: 0;
   }
-  .dept-count-widget::-webkit-scrollbar { display: none; }
-  .dept-lb-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .4px;
-    color: var(--muted);
-    white-space: nowrap;
-    margin-right: 4px;
-    flex-shrink: 0;
-  }
-  .dept-count-chip {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #f8f9fb, #eceef2);
-    border: 1px solid var(--border);
-    font-size: 11px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    cursor: pointer;
-    transition: all .15s;
-  }
-  .dept-count-chip:hover { border-color: var(--red); background: white; }
-  .dept-count-chip .chip-rank {
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--muted);
-    width: 14px;
-  }
-  .chip-rank.r1 { color: #F59E0B; }
-  .chip-rank.r2 { color: #9CA3AF; }
-  .chip-rank.r3 { color: #CD7C2F; }
-  .dept-count-chip .chip-name {
-    color: var(--text);
-    font-weight: 500;
-  }
-  .dept-count-chip .chip-num {
-    background: var(--red);
+  .lb-header {
+    background: var(--black);
     color: white;
-    font-size: 10px;
+    padding: 10px 14px;
+    font-size: 11px;
     font-weight: 700;
-    border-radius: 8px;
-    padding: 1px 6px;
-    min-width: 18px;
-    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .dept-count-chip .chip-num.zero { background: #ccc; }
-  .chip-trend { font-size: 10px; }
+  .lb-header span { opacity: .5; font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .lb-row {
+    display: flex;
+    align-items: center;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .1s;
+    gap: 8px;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row:hover { background: #fafafa; }
+  .lb-rank {
+    font-size: 11px;
+    font-weight: 700;
+    width: 18px;
+    flex-shrink: 0;
+    text-align: center;
+    color: var(--muted);
+  }
+  .lb-rank.r1 { color: #F59E0B; }
+  .lb-rank.r2 { color: #9CA3AF; }
+  .lb-rank.r3 { color: #CD7C2F; }
+  .lb-name {
+    font-size: 12px;
+    color: var(--text);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lb-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--black);
+    flex-shrink: 0;
+    min-width: 20px;
+    text-align: right;
+  }
+  .lb-count.zero { color: #ccc; }
+  .lb-trend { font-size: 10px; flex-shrink: 0; width: 12px; text-align: center; }
+  .lb-empty { padding: 16px 14px; font-size: 11px; color: #ccc; font-style: italic; }
 
   /* ── DEPT NAV BAR ── */
   .dept-nav {
@@ -445,11 +462,16 @@
     <span class="dept-nav-label">Jump to:</span>
     <span class="dept-nav-empty" id="deptNavEmpty">No departments yet</span>
     <div style="flex:1"></div>
-    <div class="dept-count-widget" id="deptCountWidget"></div>
   </div>
 
-  <div class="main">
-    <div id="deptList"></div>
+  <div class="page-layout">
+    <div class="main">
+      <div id="deptList"></div>
+    </div>
+    <div class="leaderboard-sidebar" id="leaderboardSidebar">
+      <div class="lb-header">Leaderboard <span>initiatives</span></div>
+      <div id="lbRows"><div class="lb-empty">No departments yet</div></div>
+    </div>
   </div>
 </div>
 
@@ -535,6 +557,7 @@ const CONFIG = {
   tenantId: 'ba8a1e7a-030e-4c67-8ba6-9743517631d1',
   apiUrl:   'https://nice-bay-0dd1e7f0f.7.azurestaticapps.net/api',
 };
+
 // ───────────────────────────────────────────────────────────────
 
 // ── MSAL AUTH ──
@@ -822,14 +845,12 @@ function jumpToDept(di) {
 function updateDeptNav() {
   const nav = document.getElementById('deptNav');
   const empty = document.getElementById('deptNavEmpty');
-  const widget = document.getElementById('deptCountWidget');
   if (!nav) return;
 
   nav.querySelectorAll('.dept-nav-btn').forEach(b => b.remove());
 
   if (state.depts.length === 0) {
     if (empty) empty.style.display = '';
-    if (widget) widget.innerHTML = '';
     return;
   }
   if (empty) empty.style.display = 'none';
@@ -845,27 +866,30 @@ function updateDeptNav() {
     else nav.appendChild(btn);
   });
 
-  // Leaderboard widget — sorted by initiative count descending
-  if (widget) {
-    const ranked = state.depts
-      .map((dept, di) => ({ name: dept.name, count: (dept.initiatives||[]).length, di }))
-      .sort((a, b) => b.count - a.count);
-
-    const prevCounts = widget._prevCounts || {};
-    widget._prevCounts = {};
-    ranked.forEach(d => widget._prevCounts[d.name] = d.count);
-
-    widget.innerHTML = '<span class="dept-lb-label">Initiatives:</span>' + ranked.map((d, ri) => {
-      const rankCls = ri === 0 ? 'r1' : ri === 1 ? 'r2' : ri === 2 ? 'r3' : '';
-      const prev = prevCounts[d.name];
-      const trend = prev === undefined ? '' : d.count > prev ? '<span class="chip-trend">▲</span>' : d.count < prev ? '<span class="chip-trend" style="color:#ccc">▼</span>' : '';
-      return '<div class="dept-count-chip" onclick="jumpToDept(' + d.di + ')">'
-        + '<span class="chip-rank ' + rankCls + '">' + (ri+1) + '</span>'
-        + '<span class="chip-name">' + esc(d.name) + '</span>'
-        + '<span class="chip-num' + (d.count === 0 ? ' zero' : '') + '">' + d.count + '</span>'
-        + trend
-        + '</div>';
-    }).join('');
+  // Sidebar leaderboard — sorted by initiative count descending
+  const lbRows = document.getElementById('lbRows');
+  if (lbRows) {
+    if (state.depts.length === 0) {
+      lbRows.innerHTML = '<div class="lb-empty">No departments yet</div>';
+    } else {
+      const ranked = state.depts
+        .map((dept, di) => ({ name: dept.name, count: (dept.initiatives||[]).length, di }))
+        .sort((a, b) => b.count - a.count);
+      const lb = document.getElementById('leaderboardSidebar');
+      const prevCounts = lb ? (lb._prevCounts || {}) : {};
+      if (lb) { lb._prevCounts = {}; ranked.forEach(d => lb._prevCounts[d.name] = d.count); }
+      lbRows.innerHTML = ranked.map((d, ri) => {
+        const rankCls = ri === 0 ? 'r1' : ri === 1 ? 'r2' : ri === 2 ? 'r3' : '';
+        const prev = prevCounts[d.name];
+        const trend = prev === undefined ? '' : d.count > prev ? '<span class="lb-trend" style="color:#10B981">▲</span>' : d.count < prev ? '<span class="lb-trend" style="color:#ccc">▼</span>' : '<span class="lb-trend"></span>';
+        return '<div class="lb-row" onclick="jumpToDept(' + d.di + ')">'
+          + '<span class="lb-rank ' + rankCls + '">' + (ri+1) + '</span>'
+          + '<span class="lb-name">' + esc(d.name) + '</span>'
+          + '<span class="lb-count' + (d.count === 0 ? ' zero' : '') + '">' + d.count + '</span>'
+          + trend
+          + '</div>';
+      }).join('');
+    }
   }
 }
 
@@ -986,3 +1010,4 @@ document.querySelectorAll('.overlay').forEach(o => {
 </script>
 </body>
 </html>
+
