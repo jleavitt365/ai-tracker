@@ -497,10 +497,11 @@
 // ── CONFIGURATION ──────────────────────────────────────────────
 // Replace these with your Azure values after IT sets them up
 const CONFIG = {
-  clientId: '38f12c91-210b-4798-98dd-2a76adae32ed',        // Azure App Registration → Application (client) ID
-  tenantId: 'ba8a1e7a-030e-4c67-8ba6-9743517631d1',        // Azure AD → Tenant ID
-  apiUrl:   'https://nice-bay-0dd1e7f0f.7.azurestaticapps.net/api',          // Azure Static Web Apps API URL (filled after deploy)
+  clientId: '38f12c91-210b-4798-98dd-2a76adae32ed',
+  tenantId: 'ba8a1e7a-030e-4c67-8ba6-9743517631d1',
+  apiUrl:   'https://nice-bay-0dd1e7f0f.7.azurestaticapps.net/api',
 };
+
 // ───────────────────────────────────────────────────────────────
 
 // ── MSAL AUTH ──
@@ -705,7 +706,7 @@ function render() {
         <td>${ini.timeActual ? esc(ini.timeActual) : '—'}</td>
         <td>${ini.due||'—'}</td>
         <td><span class="by-line">${esc(ini.addedBy||'')}</span></td>
-        <td><span class="edit-link" onclick="editInit(${di},${ii})">Edit</span></td>
+        <td><span class="edit-link" onclick="editInit(${di},${ii})">Edit</span> &nbsp;<span class="edit-link" style="color:#999" onclick="deleteInit(${di},${ii})">Delete</span></td>
       </tr>`;
     }).join('');
 
@@ -726,6 +727,7 @@ function render() {
         <div class="dept-right">
           <span class="step-badge ${stepCls(dept.step)}">${esc(dept.step)}</span>
           <span class="edit-link" onclick="event.stopPropagation();editDept(${di})">Edit</span>
+          <span class="edit-link" style="color:#999" onclick="event.stopPropagation();deleteDept(${di})">Delete</span>
           <button class="chevron" id="chev${di}">▼</button>
         </div>
       </div>
@@ -813,7 +815,7 @@ function updateDeptNav() {
   if (widget) {
     widget.innerHTML = state.depts.map((dept, di) => {
       const count = (dept.initiatives || []).length;
-      return '<div class="dept-count-chip" style="cursor:pointer" onclick="document.getElementById('dept-anchor-'+'+di+').scrollIntoView({behavior:'smooth',block:'start'})">'
+      return '<div class="dept-count-chip" style="cursor:pointer" onclick="document.getElementById(\'dept-anchor-\'+'+di+').scrollIntoView({behavior:\'smooth\',block:\'start\'})">'
         + '<span class="chip-name">' + esc(dept.name) + '</span>'
         + '<span class="chip-num' + (count === 0 ? ' zero' : '') + '">' + count + '</span>'
         + '</div>';
@@ -936,4 +938,3 @@ document.querySelectorAll('.overlay').forEach(o => {
 </script>
 </body>
 </html>
-
