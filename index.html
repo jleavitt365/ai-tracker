@@ -444,12 +444,12 @@
   </div>
 
   <!-- LEADERBOARD LEFT | CENTER | LICENSE RIGHT -->
-  <div style="display:grid;grid-template-columns:1fr 210px;grid-template-rows:auto auto auto;align-items:start;">
+  <div style="display:grid;grid-template-columns:1fr;grid-template-rows:auto auto auto;align-items:start;width:100%;">
 
 
 
     <!-- CENTER TOP: Snapshot bar -->
-    <div style="grid-column:1;grid-row:1;">
+    <div style="grid-column:1;grid-row:1;width:100%;">
       <div class="snapshot-bar" id="snapshotBar">
     <div class="snapshot-left">
       <span class="snapshot-label">📸 Last Snapshot</span>
@@ -465,7 +465,7 @@
     </div>
 
     <!-- CENTER MID: Summary row -->
-    <div style="grid-column:1;grid-row:2;">
+    <div style="grid-column:1;grid-row:2;width:100%;">
       <div class="summary-row-wrap"><div class="summary-row" id="summaryRow">
             <!-- Leaderboard as first column -->
             <div style="background:white;border-right:3px solid var(--red);padding:0;">
@@ -567,7 +567,7 @@
 
       </div></div><!-- end summary-row-wrap -->
     <!-- CENTER BOT: Nav + Dept list -->
-    <div style="grid-column:1;grid-row:3;min-width:0;">
+    <div style="grid-column:1;grid-row:3;width:100%;min-width:0;">
       <div class="dept-nav" id="deptNav">
     <span class="dept-nav-label">Jump to:</span>
     <span class="dept-nav-empty" id="deptNavEmpty">No departments yet</span>
@@ -579,7 +579,7 @@
     </div>
 
     <!-- RIGHT: License sidebar spanning all rows -->
-    <div style="grid-column:2;grid-row:1/4;position:sticky;top:20px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto;margin-top:20px;margin-right:16px;display:flex;flex-direction:column;gap:10px;">
+    <div style="display:none;position:sticky;top:20px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto;margin-top:20px;margin-right:16px;display:flex;flex-direction:column;gap:10px;">
       >
     </div>
 
