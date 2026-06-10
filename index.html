@@ -394,11 +394,15 @@
 
 <script>
 // ── CONFIGURATION ──────────────────────────────────────────────
-// Replace these with your Azure values after IT sets them up
 const CONFIG = {
   clientId: '38f12c91-210b-4798-98dd-2a76adae32ed',
   tenantId: 'ba8a1e7a-030e-4c67-8ba6-9743517631d1',
   apiUrl:   'https://nice-bay-0dd1e7f0f.7.azurestaticapps.net/api',
+  storageAccount: 'omgaitracker',
+  storageKey: '9Os1Wnh25tWGCIORgHJPvM6AtbHG9wiwnRCG9/Fy0X5IkpVYBkAuHqxlrOGJKlQSmBAg/C6n991j+ASt/RozfA==',
+  tableName: 'AITracker',
+  partitionKey: 'tracker',
+  rowKey: 'main'
 };
 // ───────────────────────────────────────────────────────────────
 
@@ -523,8 +527,7 @@ async function buildSharedKeyAuth(method, date, contentType, url) {
   const resource = '/' + account + urlObj.pathname;
   // SharedKeyLite string to sign
   const parts = [date, resource];
-  const stringToSign = parts.join('
-');
+  const stringToSign = parts.join('\n');
   const cryptoKey = await crypto.subtle.importKey(
     'raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
   );
