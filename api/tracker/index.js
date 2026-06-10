@@ -18,13 +18,6 @@ function getClient() {
 module.exports = async function(context, req) {
   const method = req.method.toUpperCase();
 
-  // Validate token (Azure Static Web Apps injects /.auth/me automatically)
-  const clientPrincipal = req.headers['x-ms-client-principal'];
-  if (!clientPrincipal) {
-    context.res = { status: 401, body: { error: 'Unauthorized' } };
-    return;
-  }
-
   try {
     const client = getClient();
 
@@ -34,7 +27,6 @@ module.exports = async function(context, req) {
         const depts = JSON.parse(entity.data || '[]');
         context.res = { status: 200, body: { depts } };
       } catch(e) {
-        // Table or entity doesn't exist yet — return empty
         context.res = { status: 200, body: { depts: [] } };
       }
 
