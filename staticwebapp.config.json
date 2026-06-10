@@ -1,10 +1,5 @@
 {
-  "routes": [
-    {
-      "route": "/api/*",
-      "allowedRoles": ["authenticated"]
-    }
-  ],
+  "routes": [],
   "globalHeaders": {
     "Cache-Control": "no-cache"
   },
