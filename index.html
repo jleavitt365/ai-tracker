@@ -1489,3 +1489,406 @@ async function initLicenses() {
 </script>
 </body>
 </html>
+function editDept(i) {
+  state.editDI = i;
+  const d = state.depts[i];
+  document.getElementById('deptModalTitle').textContent = 'Edit Department';
+  document.getElementById('dName').value = d.name;
+  document.getElementById('dChamp').value = d.champion||'';
+  document.getElementById('dLeader').value = d.leader||'';
+  document.getElementById('dHead').value = d.head||'';
+  document.getElementById('dWave').value = d.wave;
+  document.getElementById('dStep').value = d.step;
+  document.getElementById('dNotes').value = d.notes||'';
+  document.getElementById('deptModal').classList.add('open');
+}
+
+async function saveDept() {
+  const name = document.getElementById('dName').value.trim();
+  if (!name) { alert('Department name is required.'); return; }
+  const d = {
+    name, champion: document.getElementById('dChamp').value.trim(),
+    leader: document.getElementById('dLeader').value.trim(),
+    head: document.getElementById('dHead').value.trim(),
+    wave: document.getElementById('dWave').value,
+    step: document.getElementById('dStep').value,
+    notes: document.getElementById('dNotes').value.trim(),
+    initiatives: state.editDI !== null ? (state.depts[state.editDI].initiatives||[]) : [],
+    addedBy: currentUser?.name || currentUser?.username,
+    addedAt: state.editDI !== null ? state.depts[state.editDI].addedAt : new Date().toISOString(),
+    lastUpdated: new Date().toISOString()
+  };
+  if (state.editDI !== null) state.depts[state.editDI] = d;
+  else state.depts.push(d);
+  closeModal('deptModal');
+  render();
+  await saveData();
+  showToast(state.editDI !== null ? 'Department updated' : 'Department added');
+}
+
+function openAddInit(di) {
+  state.activeDI = di; state.editII = null;
+  document.getElementById('initModalTitle').textContent = 'Add Initiative';
+  ['iTitle','iLeader','iDesc','iAITool','iTime','iTimeActual','iDue'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('iStatus').value = 'Planned';
+  document.getElementById('initModal').classList.add('open');
+}
+
+function editInit(di, ii) {
+  state.activeDI = di; state.editII = ii;
+  const ini = state.depts[di].initiatives[ii];
+  document.getElementById('initModalTitle').textContent = 'Edit Initiative';
+  document.getElementById('iTitle').value = ini.title;
+  document.getElementById('iLeader').value = ini.leader||'';
+  document.getElementById('iDesc').value = ini.desc||'';
+  document.getElementById('iStatus').value = ini.status;
+  document.getElementById('iAITool').value = ini.aiTool||'';
+  document.getElementById('iTime').value = ini.timeSaved||'';
+  document.getElementById('iTimeActual').value = ini.timeActual||'';
+  document.getElementById('iDue').value = ini.due||'';
+  document.getElementById('initModal').classList.add('open');
+}
+
+async function saveInit() {
+  const title = document.getElementById('iTitle').value.trim();
+  if (!title) { alert('Initiative title is required.'); return; }
+  const ini = {
+    title, leader: document.getElementById('iLeader').value.trim(),
+    desc: document.getElementById('iDesc').value.trim(),
+    status: document.getElementById('iStatus').value,
+    aiTool: document.getElementById('iAITool').value,
+    timeSaved: document.getElementById('iTime').value.trim(),
+    timeActual: document.getElementById('iTimeActual').value.trim(),
+    due: document.getElementById('iDue').value,
+    addedBy: currentUser?.name || currentUser?.username,
+    addedAt: state.editII !== null ? state.depts[state.activeDI].initiatives[state.editII].addedAt : new Date().toISOString()
+  };
+  const dept = state.depts[state.activeDI];
+  if (!dept.initiatives) dept.initiatives = [];
+  if (state.editII !== null) dept.initiatives[state.editII] = ini;
+  else dept.initiatives.push(ini);
+  dept.lastUpdated = new Date().toISOString();
+  closeModal('initModal');
+  render();
+  document.getElementById('ib'+state.activeDI)?.classList.add('open');
+  document.getElementById('chev'+state.activeDI)?.classList.add('open');
+  await saveData();
+  showToast(state.editII !== null ? 'Initiative updated' : 'Initiative added');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target === o) o.classList.remove('open'); });
+});
+
+// ── WIN OF THE WEEK ──
+let wow = { text: '', author: '', date: '' };
+
+async function loadWow() {
+  try {
+    const saved = localStorage.getItem('aiWow');
+    if (saved) { wow = JSON.parse(saved); renderWow(); }
+  } catch(e) {}
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'wow\',RowKey=\'current\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, { headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth } });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) { wow = JSON.parse(entity.Data); try { localStorage.setItem('aiWow', JSON.stringify(wow)); } catch(e) {} renderWow(); }
+    }
+  } catch(e) { console.error('WOW load failed:', e); }
+}
+
+function renderWow() {
+  const textEl = document.getElementById('wowText');
+  const metaEl = document.getElementById('wowMeta');
+  if (!textEl) return;
+  if (wow.text) {
+    textEl.textContent = '"' + wow.text + '"';
+    textEl.classList.remove('empty');
+    metaEl.textContent = (wow.author ? wow.author + '  ·  ' : '') + (wow.date ? wow.date : '');
+  } else {
+    textEl.textContent = "No win entered yet — click Edit to add this week's highlight";
+    textEl.classList.add('empty');
+    metaEl.textContent = '';
+  }
+}
+
+function openWow() {
+  document.getElementById('wowInput').value = wow.text || '';
+  document.getElementById('wowAuthor').value = wow.author || '';
+  document.getElementById('wowModal').classList.add('open');
+}
+
+async function saveWow() {
+  wow = {
+    text: document.getElementById('wowInput').value.trim(),
+    author: document.getElementById('wowAuthor').value.trim(),
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  };
+  try { localStorage.setItem('aiWow', JSON.stringify(wow)); } catch(e) {}
+  renderWow();
+  closeModal('wowModal');
+  // Save to Azure
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'wow\',RowKey=\'current\')';
+    const body = JSON.stringify({ PartitionKey: 'wow', RowKey: 'current', Data: JSON.stringify(wow) });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, { method: 'MERGE', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth, 'If-Match': '*' }, body });
+    if (res.status === 404) {
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, { method: 'PUT', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth2 }, body });
+    }
+  } catch(e) { console.error('WOW save failed:', e); }
+  showToast('Win of the Week saved!');
+}
+
+// ── LAST UPDATED on dept cards ──
+function getLastUpdatedBadge(dept) {
+  if (!dept.lastUpdated) return '';
+  const days = Math.floor((Date.now() - new Date(dept.lastUpdated)) / 86400000);
+  const label = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + 'd ago';
+  const cls = days <= 7 ? 'lu-fresh' : days <= 30 ? 'lu-stale' : 'lu-old';
+  return '<span class="last-updated-badge ' + cls + '">Updated ' + label + '</span>';
+}
+
+// ── MONTHLY SNAPSHOT ──
+let snapshots = [];
+
+async function loadSnapshots() {
+  try {
+    const saved = localStorage.getItem('aiSnapshots');
+    if (saved) { snapshots = JSON.parse(saved); renderLatestSnapshot(); }
+  } catch(e) {}
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'snapshots\',RowKey=\'history\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, { headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth } });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) { snapshots = JSON.parse(entity.Data); try { localStorage.setItem('aiSnapshots', JSON.stringify(snapshots)); } catch(e) {} renderLatestSnapshot(); }
+    }
+    // Auto-capture on 1st of month
+    const now = new Date();
+    if (now.getDate() === 1) {
+      const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+      const alreadyCaptured = snapshots.some(s => s.monthKey === monthKey);
+      if (!alreadyCaptured) captureSnapshot(true);
+    }
+  } catch(e) { console.error('Snapshot load failed:', e); }
+}
+
+async function captureSnapshot(auto) {
+  const now = new Date();
+  const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  let t=0,a=0,ip=0,pl=0,co=0;
+  state.depts.forEach(d => (d.initiatives||[]).forEach(i => {
+    t++; if(i.status==='Active')a++; if(i.status==='In Progress')ip++; if(i.status==='Planned')pl++; if(i.status==='Complete')co++;
+  }));
+  const snap = {
+    monthKey,
+    date: now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    capturedAt: now.toISOString(),
+    auto: !!auto,
+    depts: state.depts.length,
+    total: t, active: a, inProgress: ip, planned: pl, complete: co,
+    licenses: { ...licenses }
+  };
+  // Replace if same month already exists
+  const idx = snapshots.findIndex(s => s.monthKey === monthKey);
+  if (idx >= 0) snapshots[idx] = snap;
+  else snapshots.unshift(snap);
+  // Keep last 24 months
+  if (snapshots.length > 24) snapshots = snapshots.slice(0, 24);
+  try { localStorage.setItem('aiSnapshots', JSON.stringify(snapshots)); } catch(e) {}
+  renderLatestSnapshot();
+  // Save to Azure
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'snapshots\',RowKey=\'history\')';
+    const body = JSON.stringify({ PartitionKey: 'snapshots', RowKey: 'history', Data: JSON.stringify(snapshots) });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, { method: 'MERGE', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth, 'If-Match': '*' }, body });
+    if (res.status === 404) {
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, { method: 'PUT', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth2 }, body });
+    }
+  } catch(e) { console.error('Snapshot save failed:', e); }
+  if (!auto) showToast('Snapshot captured for ' + snap.date);
+}
+
+function renderLatestSnapshot() {
+  const pills = document.getElementById('snapshotPills');
+  if (!pills || snapshots.length === 0) return;
+  const s = snapshots[0];
+  pills.innerHTML =
+    '<span class="snapshot-pill"><strong>' + s.date + '</strong></span>' +
+    '<span class="snapshot-pill"><strong>' + s.depts + '</strong> depts</span>' +
+    '<span class="snapshot-pill"><strong>' + s.total + '</strong> initiatives</span>' +
+    '<span class="snapshot-pill"><strong>' + s.active + '</strong> active</span>' +
+    '<span class="snapshot-pill"><strong>' + s.complete + '</strong> complete</span>';
+}
+
+function openSnapshotHistory() {
+  const list = document.getElementById('snapshotHistoryList');
+  if (snapshots.length === 0) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:13px">No snapshots yet. Click Capture Now to take your first one.</p>';
+  } else {
+    list.innerHTML = snapshots.map(s => '<div class="snapshot-entry">' +
+      '<div class="snapshot-entry-date">' + s.date + (s.auto ? ' <span style="font-size:10px;color:var(--muted);font-weight:400">(auto)</span>' : '') + '</div>' +
+      '<div class="snapshot-entry-pills">' +
+        '<span class="snapshot-entry-pill"><strong>' + s.depts + '</strong> departments</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.total + '</strong> total initiatives</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.active + '</strong> active</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.inProgress + '</strong> in progress</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.planned + '</strong> planned</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.complete + '</strong> complete</span>' +
+      '</div></div>'
+    ).join('');
+  }
+  document.getElementById('snapshotModal').classList.add('open');
+}
+
+// ── LICENSE MANAGEMENT ──
+let licenses = { claude: 35, copilot: 64, lovable: 2, gemini: 0, chatgpt: 0 };
+let editingLicense = null;
+
+async function loadLicenses() {
+  // Try localStorage first for instant render
+  try {
+    const saved = localStorage.getItem('aiLicenses');
+    if (saved) { licenses = JSON.parse(saved); renderLicenses(); }
+  } catch(e) {}
+
+  // Load from Azure Table Storage
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table +
+      '(PartitionKey=\'licenses\',RowKey=\'main\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, {
+      headers: {
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': auth
+      }
+    });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) {
+        licenses = JSON.parse(entity.Data);
+        try { localStorage.setItem('aiLicenses', JSON.stringify(licenses)); } catch(e) {}
+        renderLicenses();
+      }
+    }
+  } catch(e) {
+    console.error('License load failed:', e);
+  }
+}
+
+async function saveLicensesToCloud() {
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table +
+      '(PartitionKey=\'licenses\',RowKey=\'main\')';
+    const body = JSON.stringify({
+      PartitionKey: 'licenses',
+      RowKey: 'main',
+      Data: JSON.stringify(licenses),
+      UpdatedBy: currentUser?.name || currentUser?.username || 'unknown',
+      UpdatedAt: new Date().toISOString()
+    });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, {
+      method: 'MERGE',
+      headers: {
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': auth,
+        'If-Match': '*'
+      },
+      body
+    });
+    if (res.status === 404) {
+      // Create new entity
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'x-ms-date': date,
+          'x-ms-version': '2021-08-06',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json;odata=nometadata',
+          'Authorization': auth2
+        },
+        body
+      });
+    }
+  } catch(e) {
+    console.error('License save failed:', e);
+  }
+}
+
+function renderLicenses() {
+  const tools = ['claude', 'copilot', 'lovable', 'gemini', 'chatgpt'];
+  tools.forEach(t => {
+    const el = document.getElementById(t + 'LicTotal');
+    if (el) el.textContent = licenses[t] || 0;
+    const el2 = document.getElementById(t + 'LicTotal2');
+    if (el2) el2.textContent = licenses[t] || 0;
+  });
+}
+
+function editLicense(tool) {
+  editingLicense = tool;
+  const names = { claude: 'Claude', copilot: 'CoPilot', lovable: 'Lovable', gemini: 'Gemini', chatgpt: 'ChatGPT' };
+  document.getElementById('licenseModalTitle').textContent = 'Edit ' + names[tool] + ' License Count';
+  document.getElementById('licenseModalLabel').textContent = 'Total ' + names[tool] + ' Seats';
+  document.getElementById('licenseCount').value = licenses[tool];
+  document.getElementById('licenseModal').classList.add('open');
+}
+
+async function saveLicense() {
+  const val = parseInt(document.getElementById('licenseCount').value);
+  if (isNaN(val) || val < 0) { alert('Please enter a valid number.'); return; }
+  licenses[editingLicense] = val;
+  try { localStorage.setItem('aiLicenses', JSON.stringify(licenses)); } catch(e) {}
+  renderLicenses();
+  closeModal('licenseModal');
+  await saveLicensesToCloud();
+  showToast('License count updated');
+}
+
+// Load licenses after sign in
+async function initLicenses() {
+  await loadLicenses();
+}
+</script>
+</body>
+</html>
