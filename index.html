@@ -515,12 +515,16 @@ async function azureTableGet() {
 
 async function buildSharedKeyAuth(method, date, contentType, url) {
   const account = CONFIG.storageAccount;
-  const keyBytes = Uint8Array.from(atob(CONFIG.storageKey), c => c.charCodeAt(0));
+  // Decode base64 storage key
+  const keyStr = CONFIG.storageKey;
+  const keyBytes = new Uint8Array(atob(keyStr).split('').map(c => c.charCodeAt(0)));
   const urlObj = new URL(url);
-  const resource = '/' + account + urlObj.pathname + urlObj.search;
-
-  const stringToSign = method + '\n\n' + contentType + '\n' + date + '\n' + resource;
-
+  // Remove query string from resource for SharedKeyLite
+  const resource = '/' + account + urlObj.pathname;
+  // SharedKeyLite string to sign
+  const parts = [date, resource];
+  const stringToSign = parts.join('
+');
   const cryptoKey = await crypto.subtle.importKey(
     'raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
   );
