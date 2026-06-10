@@ -132,6 +132,7 @@
   .tool-copilot{background:#E0F2FE;color:#0369A1;border:1px solid #BAE6FD;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
   .tool-gemini{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
   .tool-chatgpt{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
+  .tool-lovable{background:#FFF0F6;color:#C0254E;border:1px solid #FECDD6;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
   .by-line { font-size:10px; color:#bbb; }
   .no-inits { font-size:12px; color:#bbb; padding:16px 0; text-align:center; }
 
@@ -163,7 +164,7 @@
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   /* ── SUMMARY CHARTS ── */
-  .summary-row { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border-bottom:1px solid var(--border); }
+  .summary-row { display:grid; grid-template-columns:1fr 1fr 220px; gap:1px; background:var(--border); border-bottom:1px solid var(--border); }
   .summary-panel { background:white; padding:18px 24px; }
   .summary-panel h3 { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin-bottom:14px; font-weight:700; display:flex; align-items:center; gap:6px; }
   .summary-panel h3::before { content:''; display:inline-block; width:3px; height:12px; background:var(--red); border-radius:2px; }
@@ -183,6 +184,32 @@
   .wave-stat .wn { font-size:14px; font-weight:800; }
   .wave-stat .wl { font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); font-weight:600; }
   .wn-active{color:#10B981} .wn-inprog{color:#3B82F6} .wn-done{color:#8B5CF6}
+
+  /* ── LICENSE PANEL ── */
+  .license-panel { background:white; padding:18px 20px; }
+  .license-panel h3 { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin-bottom:14px; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .license-panel h3::before { content:''; display:inline-block; width:3px; height:12px; background:var(--red); border-radius:2px; }
+  .license-item { margin-bottom:14px; }
+  .license-item:last-child { margin-bottom:0; }
+  .license-tool { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .license-tool-name { font-size:12px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; }
+  .license-tool-badge { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:700; }
+  .badge-claude { background:#F3E8FF; color:#7C3AED; border:1px solid #DDD6FE; }
+  .badge-copilot { background:#E0F2FE; color:#0369A1; border:1px solid #BAE6FD; }
+  .badge-lovable { background:#FFF0F6; color:#C0254E; border:1px solid #FECDD6; }
+  .badge-gemini { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+  .badge-chatgpt { background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
+  .license-counts { display:flex; align-items:baseline; gap:4px; }
+  .license-total { font-size:26px; font-weight:800; color:var(--black); line-height:1; }
+  .license-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+  .license-track { height:6px; background:rgba(200,16,46,.08); border-radius:4px; overflow:hidden; margin-top:6px; }
+  .license-fill-claude { height:100%; border-radius:4px; background:linear-gradient(90deg,#7C3AED,#9333EA); transition:width .5s; }
+  .license-fill-copilot { height:100%; border-radius:4px; background:linear-gradient(90deg,#0369A1,#0284C7); transition:width .5s; }
+  .license-fill-lovable { height:100%; border-radius:4px; background:linear-gradient(90deg,#C0254E,#E11D48); transition:width .5s; }
+  .license-fill-gemini { height:100%; border-radius:4px; background:linear-gradient(90deg,#1D4ED8,#2563EB); transition:width .5s; }
+  .license-fill-chatgpt { height:100%; border-radius:4px; background:linear-gradient(90deg,#065F46,#059669); transition:width .5s; }
+  .license-edit-row { display:flex; align-items:center; gap:6px; margin-top:4px; }
+  .license-edit-btn { font-size:10px; color:var(--red); cursor:pointer; text-decoration:underline; font-weight:600; background:none; border:none; font-family:var(--font); padding:0; }
 
   /* ── DEPT LEADERBOARD WIDGET ── */
   .dept-count-widget { display:none; }
@@ -223,6 +250,7 @@
     .main { padding:16px; }
     .modal { width:calc(100vw - 32px); }
     .leaderboard-sidebar { display:none; }
+    .license-panel { border-top:1px solid var(--border); }
   }
 </style>
 </head>
@@ -299,6 +327,79 @@
       <h3>Progress by Wave</h3>
       <div id="waveBreakdown"></div>
     </div>
+    <div class="license-panel">
+      <h3>Licenses</h3>
+      <div class="license-item">
+        <div class="license-tool">
+          <span class="license-tool-name"><span class="license-tool-badge badge-claude">Claude</span></span>
+          <div class="license-counts">
+            <span class="license-total" id="claudeLicTotal">35</span>
+            <span class="license-label">seats</span>
+          </div>
+        </div>
+        <div class="license-track"><div class="license-fill-claude" id="claudeLicBar" style="width:100%"></div></div>
+        <div class="license-edit-row">
+          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+          <button class="license-edit-btn" onclick="editLicense('claude')">Edit</button>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-tool">
+          <span class="license-tool-name"><span class="license-tool-badge badge-copilot">CoPilot</span></span>
+          <div class="license-counts">
+            <span class="license-total" id="copilotLicTotal">64</span>
+            <span class="license-label">seats</span>
+          </div>
+        </div>
+        <div class="license-track"><div class="license-fill-copilot" id="copilotLicBar" style="width:100%"></div></div>
+        <div class="license-edit-row">
+          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+          <button class="license-edit-btn" onclick="editLicense('copilot')">Edit</button>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-tool">
+          <span class="license-tool-name"><span class="license-tool-badge badge-lovable">Lovable</span></span>
+          <div class="license-counts">
+            <span class="license-total" id="lovableLicTotal">2</span>
+            <span class="license-label">seats</span>
+          </div>
+        </div>
+        <div class="license-track"><div class="license-fill-lovable" id="lovableLicBar" style="width:100%"></div></div>
+        <div class="license-edit-row">
+          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+          <button class="license-edit-btn" onclick="editLicense('lovable')">Edit</button>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-tool">
+          <span class="license-tool-name"><span class="license-tool-badge badge-gemini">Gemini</span></span>
+          <div class="license-counts">
+            <span class="license-total" id="geminiLicTotal">0</span>
+            <span class="license-label">seats</span>
+          </div>
+        </div>
+        <div class="license-track"><div class="license-fill-gemini" id="geminiLicBar" style="width:100%"></div></div>
+        <div class="license-edit-row">
+          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+          <button class="license-edit-btn" onclick="editLicense('gemini')">Edit</button>
+        </div>
+      </div>
+      <div class="license-item">
+        <div class="license-tool">
+          <span class="license-tool-name"><span class="license-tool-badge badge-chatgpt">ChatGPT</span></span>
+          <div class="license-counts">
+            <span class="license-total" id="chatgptLicTotal">0</span>
+            <span class="license-label">seats</span>
+          </div>
+        </div>
+        <div class="license-track"><div class="license-fill-chatgpt" id="chatgptLicBar" style="width:100%"></div></div>
+        <div class="license-edit-row">
+          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+          <button class="license-edit-btn" onclick="editLicense('chatgpt')">Edit</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="dept-nav" id="deptNav">
@@ -364,6 +465,7 @@
         <option>CoPilot</option>
         <option>Gemini</option>
         <option>ChatGPT</option>
+        <option>Lovable</option>
       </select>
     </div>
     <div class="fg"><label>Time Saved (estimate)</label><input id="iTime" placeholder="e.g. 2 hrs per week"></div>
@@ -386,6 +488,18 @@
       <strong>Wave 3:</strong> Remaining departments. Largely self-service using templates and prompts built by earlier waves.
     </p>
     <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('infoModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- LICENSE EDIT MODAL -->
+<div class="overlay" id="licenseModal">
+  <div class="modal" style="width:340px">
+    <h2 id="licenseModalTitle">Edit License Count</h2>
+    <div class="fg"><label id="licenseModalLabel">Total Seats</label><input type="number" id="licenseCount" min="0" max="9999" placeholder="e.g. 35"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('licenseModal')">Cancel</button>
+      <button class="btn-save" onclick="saveLicense()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -453,6 +567,7 @@ function onSignedIn() {
   document.getElementById('appShell').style.display = 'block';
   document.getElementById('navUser').textContent = currentUser.name || currentUser.username;
   loadData();
+  initLicenses();
 }
 
 // Check if already signed in on page load
@@ -964,6 +1079,126 @@ function showToast(msg) {
 document.querySelectorAll('.overlay').forEach(o => {
   o.addEventListener('click', e => { if(e.target === o) o.classList.remove('open'); });
 });
+
+// ── LICENSE MANAGEMENT ──
+let licenses = { claude: 35, copilot: 64, lovable: 2, gemini: 0, chatgpt: 0 };
+let editingLicense = null;
+
+async function loadLicenses() {
+  // Try localStorage first for instant render
+  try {
+    const saved = localStorage.getItem('aiLicenses');
+    if (saved) { licenses = JSON.parse(saved); renderLicenses(); }
+  } catch(e) {}
+
+  // Load from Azure Table Storage
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table +
+      '(PartitionKey=\'licenses\',RowKey=\'main\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, {
+      headers: {
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': auth
+      }
+    });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) {
+        licenses = JSON.parse(entity.Data);
+        try { localStorage.setItem('aiLicenses', JSON.stringify(licenses)); } catch(e) {}
+        renderLicenses();
+      }
+    }
+  } catch(e) {
+    console.error('License load failed:', e);
+  }
+}
+
+async function saveLicensesToCloud() {
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table +
+      '(PartitionKey=\'licenses\',RowKey=\'main\')';
+    const body = JSON.stringify({
+      PartitionKey: 'licenses',
+      RowKey: 'main',
+      Data: JSON.stringify(licenses),
+      UpdatedBy: currentUser?.name || currentUser?.username || 'unknown',
+      UpdatedAt: new Date().toISOString()
+    });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, {
+      method: 'MERGE',
+      headers: {
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': auth,
+        'If-Match': '*'
+      },
+      body
+    });
+    if (res.status === 404) {
+      // Create new entity
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'x-ms-date': date,
+          'x-ms-version': '2021-08-06',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json;odata=nometadata',
+          'Authorization': auth2
+        },
+        body
+      });
+    }
+  } catch(e) {
+    console.error('License save failed:', e);
+  }
+}
+
+function renderLicenses() {
+  const tools = ['claude', 'copilot', 'lovable', 'gemini', 'chatgpt'];
+  tools.forEach(t => {
+    const el = document.getElementById(t + 'LicTotal');
+    if (el) el.textContent = licenses[t] || 0;
+  });
+}
+
+function editLicense(tool) {
+  editingLicense = tool;
+  const names = { claude: 'Claude', copilot: 'CoPilot', lovable: 'Lovable', gemini: 'Gemini', chatgpt: 'ChatGPT' };
+  document.getElementById('licenseModalTitle').textContent = 'Edit ' + names[tool] + ' License Count';
+  document.getElementById('licenseModalLabel').textContent = 'Total ' + names[tool] + ' Seats';
+  document.getElementById('licenseCount').value = licenses[tool];
+  document.getElementById('licenseModal').classList.add('open');
+}
+
+async function saveLicense() {
+  const val = parseInt(document.getElementById('licenseCount').value);
+  if (isNaN(val) || val < 0) { alert('Please enter a valid number.'); return; }
+  licenses[editingLicense] = val;
+  try { localStorage.setItem('aiLicenses', JSON.stringify(licenses)); } catch(e) {}
+  renderLicenses();
+  closeModal('licenseModal');
+  await saveLicensesToCloud();
+  showToast('License count updated');
+}
+
+// Load licenses after sign in
+async function initLicenses() {
+  await loadLicenses();
+}
 </script>
 </body>
 </html>
