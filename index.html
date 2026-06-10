@@ -316,7 +316,7 @@
   .page-layout { display:flex; align-items:flex-start; gap:0; }
   .main { padding:20px 24px; flex:1; min-width:0; }
   .right-sidebar { width:210px; flex-shrink:0; display:flex; flex-direction:column; gap:10px; position:sticky; top:20px; max-height:calc(100vh - 112px); align-self:flex-start; margin-top:20px; margin-right:20px; overflow-y:auto; }
-  .leaderboard-sidebar { width:210px; flex-shrink:0; background:white; border-left:3px solid var(--red); border-radius:0 0 10px 0; box-shadow:0 8px 28px rgba(200,16,46,.15), 0 2px 8px rgba(0,0,0,.08); }
+  .leaderboard-sidebar { flex-shrink:0; background:white; border-right:3px solid var(--red); box-shadow:2px 0 12px rgba(200,16,46,.10); }
   .lb-header { background:linear-gradient(135deg,var(--red) 0%,#7a0b1a 100%); color:white; padding:13px 14px 11px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; }
   .lb-header::after { content:''; position:absolute; top:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,.06); }
   .lb-header-icon { font-size:15px; margin-right:6px; }
@@ -427,117 +427,12 @@
     <div class="kpi k-depts"><div class="num" id="kDepts">0</div><div class="lbl">Departments</div></div>
   </div>
 
-  <div class="snapshot-bar" id="snapshotBar">
-    <div class="snapshot-left">
-      <span class="snapshot-label">📸 Last Snapshot</span>
-      <div class="snapshot-pills" id="snapshotPills">
-        <span class="snapshot-pill" style="color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)">No snapshot yet</span>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="snapshot-history-btn" onclick="openSnapshotHistory()">📋 History</button>
-      <button class="snapshot-btn" onclick="captureSnapshot()">📸 Capture Now</button>
-    </div>
-  </div>
+  <!-- LEADERBOARD LEFT | CENTER | LICENSE RIGHT -->
+  <div style="display:grid;grid-template-columns:200px 1fr 210px;grid-template-rows:auto auto auto;align-items:start;">
 
-  <div class="summary-row" id="summaryRow">
-    <div class="summary-panel">
-      <h3>Initiative Status Breakdown</h3>
-      <div class="bar-row"><span class="bar-label">Active</span><div class="bar-track"><div class="bar-fill bar-active" id="barActive" style="width:0%"></div></div><span class="bar-num" id="barActiveN">0</span><span class="bar-pct" id="barActivePct">—</span></div>
-      <div class="bar-row"><span class="bar-label">In Progress</span><div class="bar-track"><div class="bar-fill bar-inprog" id="barInProg" style="width:0%"></div></div><span class="bar-num" id="barInProgN">0</span><span class="bar-pct" id="barInProgPct">—</span></div>
-      <div class="bar-row"><span class="bar-label">Planned</span><div class="bar-track"><div class="bar-fill bar-planned" id="barPlanned" style="width:0%"></div></div><span class="bar-num" id="barPlannedN">0</span><span class="bar-pct" id="barPlannedPct">—</span></div>
-      <div class="bar-row"><span class="bar-label">Complete</span><div class="bar-track"><div class="bar-fill bar-complete" id="barComplete" style="width:0%"></div></div><span class="bar-num" id="barCompleteN">0</span><span class="bar-pct" id="barCompletePct">—</span></div>
-    </div>
-    <div class="summary-panel">
-      <h3>Progress by Wave</h3>
-      <div id="waveBreakdown"></div>
-    </div>
-    <div class="license-panel">
-      <h3>Licenses</h3>
-      <div class="license-item">
-        <div class="license-tool">
-          <span class="license-tool-name"><span class="license-tool-badge badge-claude">Claude</span></span>
-          <div class="license-counts">
-            <span class="license-total" id="claudeLicTotal">35</span>
-            <span class="license-label">seats</span>
-          </div>
-        </div>
-        <div class="license-track"><div class="license-fill-claude" id="claudeLicBar" style="width:100%"></div></div>
-        <div class="license-edit-row">
-          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
-          <button class="license-edit-btn" onclick="editLicense('claude')">Edit</button>
-        </div>
-      </div>
-      <div class="license-item">
-        <div class="license-tool">
-          <span class="license-tool-name"><span class="license-tool-badge badge-copilot">CoPilot</span></span>
-          <div class="license-counts">
-            <span class="license-total" id="copilotLicTotal">64</span>
-            <span class="license-label">seats</span>
-          </div>
-        </div>
-        <div class="license-track"><div class="license-fill-copilot" id="copilotLicBar" style="width:100%"></div></div>
-        <div class="license-edit-row">
-          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
-          <button class="license-edit-btn" onclick="editLicense('copilot')">Edit</button>
-        </div>
-      </div>
-      <div class="license-item">
-        <div class="license-tool">
-          <span class="license-tool-name"><span class="license-tool-badge badge-lovable">Lovable</span></span>
-          <div class="license-counts">
-            <span class="license-total" id="lovableLicTotal">2</span>
-            <span class="license-label">seats</span>
-          </div>
-        </div>
-        <div class="license-track"><div class="license-fill-lovable" id="lovableLicBar" style="width:100%"></div></div>
-        <div class="license-edit-row">
-          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
-          <button class="license-edit-btn" onclick="editLicense('lovable')">Edit</button>
-        </div>
-      </div>
-      <div class="license-item">
-        <div class="license-tool">
-          <span class="license-tool-name"><span class="license-tool-badge badge-gemini">Gemini</span></span>
-          <div class="license-counts">
-            <span class="license-total" id="geminiLicTotal">0</span>
-            <span class="license-label">seats</span>
-          </div>
-        </div>
-        <div class="license-track"><div class="license-fill-gemini" id="geminiLicBar" style="width:100%"></div></div>
-        <div class="license-edit-row">
-          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
-          <button class="license-edit-btn" onclick="editLicense('gemini')">Edit</button>
-        </div>
-      </div>
-      <div class="license-item">
-        <div class="license-tool">
-          <span class="license-tool-name"><span class="license-tool-badge badge-chatgpt">ChatGPT</span></span>
-          <div class="license-counts">
-            <span class="license-total" id="chatgptLicTotal">0</span>
-            <span class="license-label">seats</span>
-          </div>
-        </div>
-        <div class="license-track"><div class="license-fill-chatgpt" id="chatgptLicBar" style="width:100%"></div></div>
-        <div class="license-edit-row">
-          <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
-          <button class="license-edit-btn" onclick="editLicense('chatgpt')">Edit</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="dept-nav" id="deptNav">
-    <span class="dept-nav-label">Jump to:</span>
-    <span class="dept-nav-empty" id="deptNavEmpty">No departments yet</span>
-    <div style="flex:1"></div>
-  </div>
-
-  <div class="page-layout">
-    <div class="main">
-      <div id="deptList"></div>
-    </div>
-    <div class="leaderboard-sidebar" id="leaderboardSidebar">
+    <!-- LEFT: Leaderboard spanning all rows -->
+    <div style="grid-column:1;grid-row:1/4;position:sticky;top:96px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto;border-right:3px solid var(--red);background:white;box-shadow:2px 0 12px rgba(200,16,46,.10);">
+      <div class="leaderboard-sidebar" id="leaderboardSidebar">
       <div class="lb-header"><div><span class="lb-header-icon">🏆</span>Leaderboard</div><span>initiatives</span></div>
       <div id="lbRows"><div class="lb-empty">No departments yet</div></div>
     </div>
@@ -613,6 +508,133 @@
       <strong>Wave 3:</strong> Remaining departments. Largely self-service using templates and prompts built by earlier waves.
     </p>
     <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('infoModal')">Close</button></div>
+  </div>
+  </div
+    </div>
+
+    <!-- CENTER TOP: Snapshot bar -->
+    <div style="grid-column:2;grid-row:1;">
+      <div class="snapshot-bar" id="snapshotBar">
+    <div class="snapshot-left">
+      <span class="snapshot-label">📸 Last Snapshot</span>
+      <div class="snapshot-pills" id="snapshotPills">
+        <span class="snapshot-pill" style="color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)">No snapshot yet</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="snapshot-history-btn" onclick="openSnapshotHistory()">📋 History</button>
+      <button class="snapshot-btn" onclick="captureSnapshot()">📸 Capture Now</button>
+    </div>
+  </div>
+    </div>
+
+    <!-- CENTER MID: Summary row -->
+    <div style="grid-column:2;grid-row:2;">
+      <div class="summary-row" style="grid-template-columns:1fr 1fr 1fr;" id="summaryRow">
+            <div class="summary-panel">
+              <h3>Initiative Status Breakdown</h3>
+              <div class="bar-row"><span class="bar-label">Active</span><div class="bar-track"><div class="bar-fill bar-active" id="barActive" style="width:0%"></div></div><span class="bar-num" id="barActiveN">0</span><span class="bar-pct" id="barActivePct">—</span></div>
+              <div class="bar-row"><span class="bar-label">In Progress</span><div class="bar-track"><div class="bar-fill bar-inprog" id="barInProg" style="width:0%"></div></div><span class="bar-num" id="barInProgN">0</span><span class="bar-pct" id="barInProgPct">—</span></div>
+              <div class="bar-row"><span class="bar-label">Planned</span><div class="bar-track"><div class="bar-fill bar-planned" id="barPlanned" style="width:0%"></div></div><span class="bar-num" id="barPlannedN">0</span><span class="bar-pct" id="barPlannedPct">—</span></div>
+              <div class="bar-row"><span class="bar-label">Complete</span><div class="bar-track"><div class="bar-fill bar-complete" id="barComplete" style="width:0%"></div></div><span class="bar-num" id="barCompleteN">0</span><span class="bar-pct" id="barCompletePct">—</span></div>
+            </div>
+            <div class="summary-panel">
+              <h3>Progress by Wave</h3>
+              <div id="waveBreakdown"></div>
+            </div>
+            <div class="license-panel">
+              <h3>Licenses</h3>
+              <div class="license-item">
+                <div class="license-tool">
+                  <span class="license-tool-name"><span class="license-tool-badge badge-claude">Claude</span></span>
+                  <div class="license-counts">
+                    <span class="license-total" id="claudeLicTotal">35</span>
+                    <span class="license-label">seats</span>
+                  </div>
+                </div>
+                <div class="license-track"><div class="license-fill-claude" id="claudeLicBar" style="width:100%"></div></div>
+                <div class="license-edit-row">
+                  <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+                  <button class="license-edit-btn" onclick="editLicense('claude')">Edit</button>
+                </div>
+              </div>
+              <div class="license-item">
+                <div class="license-tool">
+                  <span class="license-tool-name"><span class="license-tool-badge badge-copilot">CoPilot</span></span>
+                  <div class="license-counts">
+                    <span class="license-total" id="copilotLicTotal">64</span>
+                    <span class="license-label">seats</span>
+                  </div>
+                </div>
+                <div class="license-track"><div class="license-fill-copilot" id="copilotLicBar" style="width:100%"></div></div>
+                <div class="license-edit-row">
+                  <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+                  <button class="license-edit-btn" onclick="editLicense('copilot')">Edit</button>
+                </div>
+              </div>
+              <div class="license-item">
+                <div class="license-tool">
+                  <span class="license-tool-name"><span class="license-tool-badge badge-lovable">Lovable</span></span>
+                  <div class="license-counts">
+                    <span class="license-total" id="lovableLicTotal">2</span>
+                    <span class="license-label">seats</span>
+                  </div>
+                </div>
+                <div class="license-track"><div class="license-fill-lovable" id="lovableLicBar" style="width:100%"></div></div>
+                <div class="license-edit-row">
+                  <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+                  <button class="license-edit-btn" onclick="editLicense('lovable')">Edit</button>
+                </div>
+              </div>
+              <div class="license-item">
+                <div class="license-tool">
+                  <span class="license-tool-name"><span class="license-tool-badge badge-gemini">Gemini</span></span>
+                  <div class="license-counts">
+                    <span class="license-total" id="geminiLicTotal">0</span>
+                    <span class="license-label">seats</span>
+                  </div>
+                </div>
+                <div class="license-track"><div class="license-fill-gemini" id="geminiLicBar" style="width:100%"></div></div>
+                <div class="license-edit-row">
+                  <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+                  <button class="license-edit-btn" onclick="editLicense('gemini')">Edit</button>
+                </div>
+              </div>
+              <div class="license-item">
+                <div class="license-tool">
+                  <span class="license-tool-name"><span class="license-tool-badge badge-chatgpt">ChatGPT</span></span>
+                  <div class="license-counts">
+                    <span class="license-total" id="chatgptLicTotal">0</span>
+                    <span class="license-label">seats</span>
+                  </div>
+                </div>
+                <div class="license-track"><div class="license-fill-chatgpt" id="chatgptLicBar" style="width:100%"></div></div>
+                <div class="license-edit-row">
+                  <span style="font-size:10px;color:var(--muted)">Paid company licenses</span>
+                  <button class="license-edit-btn" onclick="editLicense('chatgpt')">Edit</button>
+                </div>
+              </div>
+            </div>
+      </div>
+    </div>
+
+    <!-- CENTER BOT: Nav + Dept list -->
+    <div style="grid-column:2;grid-row:3;min-width:0;">
+      <div class="dept-nav" id="deptNav">
+    <span class="dept-nav-label">Jump to:</span>
+    <span class="dept-nav-empty" id="deptNavEmpty">No departments yet</span>
+    <div style="flex:1"></div>
+  </div>
+      <div class="main">
+      <div id="deptList"></div>
+    </div>
+    </div>
+
+    <!-- RIGHT: License sidebar spanning all rows -->
+    <div style="grid-column:3;grid-row:1/4;position:sticky;top:20px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto;margin-top:20px;margin-right:16px;display:flex;flex-direction:column;gap:10px;">
+      >
+    </div>
+
   </div>
 </div>
 
