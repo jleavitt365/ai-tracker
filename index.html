@@ -461,29 +461,72 @@ window.addEventListener('load', async () => {
   }
 });
 
-// ── DATA / API ──
-async function apiCall(method, path, body) {
-  setSaving(true);
+// ── AZURE TABLE STORAGE DIRECT ──
+function getStorageHeaders(method, contentLength) {
+  const account = CONFIG.storageAccount;
+  const key = CONFIG.storageKey;
+  const date = new Date().toUTCString();
+  const canonicalized = method + '\n\n' +
+    (method === 'PUT' || method === 'POST' || method === 'MERGE' ? 'application/json' : '') +
+    '\n' + date + '\n/' + account + '/' + CONFIG.tableName +
+    '(PartitionKey=\'' + CONFIG.partitionKey + '\',RowKey=\'' + CONFIG.rowKey + '\')';
+
+  // Use SAS token approach instead of HMAC (browser can't do HMAC-SHA256 easily)
+  return { date };
+}
+
+// Build a SAS URL for table operations
+function tableUrl(includeEntity) {
+  const account = CONFIG.storageAccount;
+  const table = CONFIG.tableName;
+  const base = 'https://' + account + '.table.core.windows.net/' + table;
+  if (includeEntity) {
+    return base + '(PartitionKey=\'' + CONFIG.partitionKey + '\',RowKey=\'' + CONFIG.rowKey + '\')';
+  }
+  return base;
+}
+
+async function azureTableGet() {
+  const url = tableUrl(true) + '?sv=2021-08-06&ss=t&srt=o&sp=rwdlacu&se=2027-01-01T00:00:00Z&st=2024-01-01T00:00:00Z&spr=https&sig=placeholder';
+  // Use shared key auth via fetch with Authorization header
+  const account = CONFIG.storageAccount;
+  const key = CONFIG.storageKey;
+  const date = new Date().toUTCString();
+  const url2 = tableUrl(true);
+
   try {
-    const token = await getToken();
-    const res = await fetch(CONFIG.apiUrl + path, {
-      method,
+    const res = await fetch(url2, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: body ? JSON.stringify(body) : undefined
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': await buildSharedKeyAuth('GET', date, '', url2)
+      }
     });
-    if (!res.ok) throw new Error('API error ' + res.status);
-    const data = method === 'DELETE' ? null : await res.json();
-    setSaving(false);
-    return data;
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error('Table GET failed: ' + res.status);
+    return await res.json();
   } catch(e) {
-    setSaving(false);
-    console.error('API call failed', e);
-    // Fall back to localStorage if API not yet configured
+    console.error('Table GET error:', e);
     return null;
   }
+}
+
+async function buildSharedKeyAuth(method, date, contentType, url) {
+  const account = CONFIG.storageAccount;
+  const keyBytes = Uint8Array.from(atob(CONFIG.storageKey), c => c.charCodeAt(0));
+  const urlObj = new URL(url);
+  const resource = '/' + account + urlObj.pathname + urlObj.search;
+
+  const stringToSign = method + '\n\n' + contentType + '\n' + date + '\n' + resource;
+
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(stringToSign));
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+  return 'SharedKeyLite ' + account + ':' + sigB64;
 }
 
 async function loadData() {
@@ -493,22 +536,84 @@ async function loadData() {
     if (local) { state.depts = JSON.parse(local); render(); }
   } catch(e) {}
 
-  // Then load from API
-  const data = await apiCall('GET', '/tracker');
-  if (data && data.depts) {
-    state.depts = data.depts;
-    try { localStorage.setItem('aiTracker_data', JSON.stringify(state.depts)); } catch(e) {}
-    render();
+  setSaving(true);
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table +
+      '(PartitionKey=\'' + CONFIG.partitionKey + '\',RowKey=\'' + CONFIG.rowKey + '\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, {
+      headers: {
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': auth
+      }
+    });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) {
+        state.depts = JSON.parse(entity.Data);
+        try { localStorage.setItem('aiTracker_data', JSON.stringify(state.depts)); } catch(e) {}
+        render();
+      }
+    }
+  } catch(e) {
+    console.error('Load failed:', e);
   }
+  setSaving(false);
 }
 
 async function saveData() {
   try { localStorage.setItem('aiTracker_data', JSON.stringify(state.depts)); } catch(e) {}
-  await apiCall('POST', '/tracker', {
-    depts: state.depts,
-    updatedBy: currentUser?.name || currentUser?.username,
-    updatedAt: new Date().toISOString()
-  });
+  setSaving(true);
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table +
+      '(PartitionKey=\'' + CONFIG.partitionKey + '\',RowKey=\'' + CONFIG.rowKey + '\')';
+    const body = JSON.stringify({
+      PartitionKey: CONFIG.partitionKey,
+      RowKey: CONFIG.rowKey,
+      Data: JSON.stringify(state.depts),
+      UpdatedBy: currentUser?.name || currentUser?.username || 'unknown',
+      UpdatedAt: new Date().toISOString()
+    });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, {
+      method: 'MERGE',
+      headers: {
+        'x-ms-date': date,
+        'x-ms-version': '2021-08-06',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json;odata=nometadata',
+        'Authorization': auth,
+        'If-Match': '*'
+      },
+      body
+    });
+    if (res.status === 404) {
+      // Entity doesn't exist yet — create it with PUT
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'x-ms-date': date,
+          'x-ms-version': '2021-08-06',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json;odata=nometadata',
+          'Authorization': auth2
+        },
+        body
+      });
+    }
+  } catch(e) {
+    console.error('Save failed:', e);
+  }
+  setSaving(false);
 }
 
 function setSaving(saving) {
