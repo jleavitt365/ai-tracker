@@ -71,6 +71,102 @@
   .btn-white { background:white; color:var(--red); border:none; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; font-family:var(--font); transition:all .15s; box-shadow:0 2px 8px rgba(0,0,0,.15); }
   .btn-white:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.2); }
 
+  /* ── WIN OF THE WEEK ── */
+  .wow-banner {
+    background: linear-gradient(135deg, #0D0D0D 0%, #1a1a2e 100%);
+    padding: 0;
+    border-bottom: 2px solid var(--red);
+    display: flex;
+    align-items: stretch;
+    min-height: 52px;
+  }
+  .wow-label {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: white;
+    padding: 0 20px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .wow-content {
+    flex: 1;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .wow-text {
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: .9;
+    font-style: italic;
+    flex: 1;
+  }
+  .wow-text.empty { opacity: .35; font-style: italic; }
+  .wow-meta { font-size: 11px; color: rgba(255,255,255,.4); white-space: nowrap; }
+  .wow-edit-btn {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    color: rgba(255,255,255,.7);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-weight: 600;
+    transition: all .15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .wow-edit-btn:hover { background: rgba(255,255,255,.2); color: white; }
+
+  /* ── LAST UPDATED ── */
+  .last-updated-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .lu-fresh { background: #D1FAE5; color: #065F46; }
+  .lu-stale { background: #FEF3C7; color: #92400E; }
+  .lu-old { background: #FEE2E2; color: #991B1B; }
+
+  /* ── MONTHLY SNAPSHOT ── */
+  .snapshot-bar {
+    background: linear-gradient(135deg, #1a1a2e, #0D0D0D);
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 8px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .snapshot-left { display: flex; align-items: center; gap: 12px; }
+  .snapshot-label { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: rgba(255,255,255,.4); font-weight: 700; }
+  .snapshot-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .snapshot-pill { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.7); font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+  .snapshot-pill strong { color: white; }
+  .snapshot-btn { background: none; border: 1px solid rgba(200,16,46,.4); color: rgba(200,16,46,.8); padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all .15s; white-space: nowrap; }
+  .snapshot-btn:hover { background: var(--red); color: white; border-color: var(--red); }
+  .snapshot-history-btn { background: none; border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.5); padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; font-family: var(--font); transition: all .15s; white-space: nowrap; }
+  .snapshot-history-btn:hover { border-color: rgba(255,255,255,.35); color: rgba(255,255,255,.8); }
+
+  /* ── SNAPSHOT HISTORY MODAL ── */
+  .snapshot-entry { padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .snapshot-entry:last-child { border-bottom: none; }
+  .snapshot-entry-date { font-size: 12px; font-weight: 700; color: var(--black); margin-bottom: 8px; }
+  .snapshot-entry-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .snapshot-entry-pill { background: var(--red-light); border: 1px solid rgba(200,16,46,.15); color: var(--text); font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+
   /* ── KPI ROW ── */
   .kpi-row { display:grid; grid-template-columns:repeat(6,1fr); background:var(--white); border-bottom:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,.05); }
   .kpi { padding:18px 12px; text-align:center; border-right:1px solid var(--border); position:relative; transition:background .15s; }
@@ -313,6 +409,15 @@
     </div>
   </div>
 
+  <div class="wow-banner" id="wowBanner">
+    <div class="wow-label">🏆 Win of the Week</div>
+    <div class="wow-content">
+      <span class="wow-text empty" id="wowText">No win entered yet — click Edit to add this week's highlight</span>
+      <span class="wow-meta" id="wowMeta"></span>
+      <button class="wow-edit-btn" onclick="openWow()">✏ Edit</button>
+    </div>
+  </div>
+
   <div class="kpi-row">
     <div class="kpi"><div class="num" id="kTotal">0</div><div class="lbl">Total Initiatives</div></div>
     <div class="kpi k-active"><div class="num" id="kActive">0</div><div class="lbl">Active</div></div>
@@ -320,6 +425,19 @@
     <div class="kpi k-planned"><div class="num" id="kPlanned">0</div><div class="lbl">Planned</div></div>
     <div class="kpi k-complete"><div class="num" id="kComplete">0</div><div class="lbl">Complete</div></div>
     <div class="kpi k-depts"><div class="num" id="kDepts">0</div><div class="lbl">Departments</div></div>
+  </div>
+
+  <div class="snapshot-bar" id="snapshotBar">
+    <div class="snapshot-left">
+      <span class="snapshot-label">📸 Last Snapshot</span>
+      <div class="snapshot-pills" id="snapshotPills">
+        <span class="snapshot-pill" style="color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)">No snapshot yet</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="snapshot-history-btn" onclick="openSnapshotHistory()">📋 History</button>
+      <button class="snapshot-btn" onclick="captureSnapshot()">📸 Capture Now</button>
+    </div>
   </div>
 
   <div class="summary-row" id="summaryRow">
@@ -498,6 +616,31 @@
   </div>
 </div>
 
+<!-- WIN OF THE WEEK MODAL -->
+<div class="overlay" id="wowModal">
+  <div class="modal" style="width:520px">
+    <h2>✏ Edit Win of the Week</h2>
+    <div class="fg">
+      <label>This Week's Win</label>
+      <textarea id="wowInput" placeholder="e.g. Quality team used Claude to draft 3 SOPs in 45 minutes — work that used to take 2 days. First use case fully live!" style="height:100px"></textarea>
+    </div>
+    <div class="fg"><label>Department / Person</label><input id="wowAuthor" placeholder="e.g. Quality — James Floury"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('wowModal')">Cancel</button>
+      <button class="btn-save" onclick="saveWow()">Save Win</button>
+    </div>
+  </div>
+</div>
+
+<!-- SNAPSHOT HISTORY MODAL -->
+<div class="overlay" id="snapshotModal">
+  <div class="modal" style="width:580px">
+    <h2>📋 Monthly Snapshot History</h2>
+    <div id="snapshotHistoryList"><p style="color:var(--muted);font-size:13px">No snapshots yet.</p></div>
+    <div class="modal-btns"><button class="btn-cancel" onclick="closeModal('snapshotModal')">Close</button></div>
+  </div>
+</div>
+
 <!-- LICENSE EDIT MODAL -->
 <div class="overlay" id="licenseModal">
   <div class="modal" style="width:340px">
@@ -575,6 +718,8 @@ function onSignedIn() {
   document.getElementById('navUser').textContent = currentUser.name || currentUser.username;
   loadData();
   initLicenses();
+  loadWow();
+  loadSnapshots();
 }
 
 // Check if already signed in on page load
@@ -855,6 +1000,7 @@ function render() {
             AI Leader: ${esc(dept.leader||'—')} &nbsp;·&nbsp;
             Wave: ${esc(dept.wave)} &nbsp;·&nbsp;
             ${inits.length} initiative${inits.length!==1?'s':''}
+            ${dept.lastUpdated ? '&nbsp;·&nbsp;' + getLastUpdatedBadge(dept) : ''}
           </div>
         </div>
         <div class="dept-right">
@@ -1016,7 +1162,8 @@ async function saveDept() {
     notes: document.getElementById('dNotes').value.trim(),
     initiatives: state.editDI !== null ? (state.depts[state.editDI].initiatives||[]) : [],
     addedBy: currentUser?.name || currentUser?.username,
-    addedAt: state.editDI !== null ? state.depts[state.editDI].addedAt : new Date().toISOString()
+    addedAt: state.editDI !== null ? state.depts[state.editDI].addedAt : new Date().toISOString(),
+    lastUpdated: new Date().toISOString()
   };
   if (state.editDI !== null) state.depts[state.editDI] = d;
   else state.depts.push(d);
@@ -1067,6 +1214,7 @@ async function saveInit() {
   if (!dept.initiatives) dept.initiatives = [];
   if (state.editII !== null) dept.initiatives[state.editII] = ini;
   else dept.initiatives.push(ini);
+  dept.lastUpdated = new Date().toISOString();
   closeModal('initModal');
   render();
   document.getElementById('ib'+state.activeDI)?.classList.add('open');
@@ -1086,6 +1234,186 @@ function showToast(msg) {
 document.querySelectorAll('.overlay').forEach(o => {
   o.addEventListener('click', e => { if(e.target === o) o.classList.remove('open'); });
 });
+
+// ── WIN OF THE WEEK ──
+let wow = { text: '', author: '', date: '' };
+
+async function loadWow() {
+  try {
+    const saved = localStorage.getItem('aiWow');
+    if (saved) { wow = JSON.parse(saved); renderWow(); }
+  } catch(e) {}
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'wow\',RowKey=\'current\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, { headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth } });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) { wow = JSON.parse(entity.Data); try { localStorage.setItem('aiWow', JSON.stringify(wow)); } catch(e) {} renderWow(); }
+    }
+  } catch(e) { console.error('WOW load failed:', e); }
+}
+
+function renderWow() {
+  const textEl = document.getElementById('wowText');
+  const metaEl = document.getElementById('wowMeta');
+  if (!textEl) return;
+  if (wow.text) {
+    textEl.textContent = '"' + wow.text + '"';
+    textEl.classList.remove('empty');
+    metaEl.textContent = (wow.author ? wow.author + '  ·  ' : '') + (wow.date ? wow.date : '');
+  } else {
+    textEl.textContent = "No win entered yet — click Edit to add this week's highlight";
+    textEl.classList.add('empty');
+    metaEl.textContent = '';
+  }
+}
+
+function openWow() {
+  document.getElementById('wowInput').value = wow.text || '';
+  document.getElementById('wowAuthor').value = wow.author || '';
+  document.getElementById('wowModal').classList.add('open');
+}
+
+async function saveWow() {
+  wow = {
+    text: document.getElementById('wowInput').value.trim(),
+    author: document.getElementById('wowAuthor').value.trim(),
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  };
+  try { localStorage.setItem('aiWow', JSON.stringify(wow)); } catch(e) {}
+  renderWow();
+  closeModal('wowModal');
+  // Save to Azure
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'wow\',RowKey=\'current\')';
+    const body = JSON.stringify({ PartitionKey: 'wow', RowKey: 'current', Data: JSON.stringify(wow) });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, { method: 'MERGE', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth, 'If-Match': '*' }, body });
+    if (res.status === 404) {
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, { method: 'PUT', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth2 }, body });
+    }
+  } catch(e) { console.error('WOW save failed:', e); }
+  showToast('Win of the Week saved!');
+}
+
+// ── LAST UPDATED on dept cards ──
+function getLastUpdatedBadge(dept) {
+  if (!dept.lastUpdated) return '';
+  const days = Math.floor((Date.now() - new Date(dept.lastUpdated)) / 86400000);
+  const label = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + 'd ago';
+  const cls = days <= 7 ? 'lu-fresh' : days <= 30 ? 'lu-stale' : 'lu-old';
+  return '<span class="last-updated-badge ' + cls + '">Updated ' + label + '</span>';
+}
+
+// ── MONTHLY SNAPSHOT ──
+let snapshots = [];
+
+async function loadSnapshots() {
+  try {
+    const saved = localStorage.getItem('aiSnapshots');
+    if (saved) { snapshots = JSON.parse(saved); renderLatestSnapshot(); }
+  } catch(e) {}
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'snapshots\',RowKey=\'history\')';
+    const auth = await buildSharedKeyAuth('GET', date, '', url);
+    const res = await fetch(url, { headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth } });
+    if (res.ok) {
+      const entity = await res.json();
+      if (entity.Data) { snapshots = JSON.parse(entity.Data); try { localStorage.setItem('aiSnapshots', JSON.stringify(snapshots)); } catch(e) {} renderLatestSnapshot(); }
+    }
+    // Auto-capture on 1st of month
+    const now = new Date();
+    if (now.getDate() === 1) {
+      const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+      const alreadyCaptured = snapshots.some(s => s.monthKey === monthKey);
+      if (!alreadyCaptured) captureSnapshot(true);
+    }
+  } catch(e) { console.error('Snapshot load failed:', e); }
+}
+
+async function captureSnapshot(auto) {
+  const now = new Date();
+  const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  let t=0,a=0,ip=0,pl=0,co=0;
+  state.depts.forEach(d => (d.initiatives||[]).forEach(i => {
+    t++; if(i.status==='Active')a++; if(i.status==='In Progress')ip++; if(i.status==='Planned')pl++; if(i.status==='Complete')co++;
+  }));
+  const snap = {
+    monthKey,
+    date: now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    capturedAt: now.toISOString(),
+    auto: !!auto,
+    depts: state.depts.length,
+    total: t, active: a, inProgress: ip, planned: pl, complete: co,
+    licenses: { ...licenses }
+  };
+  // Replace if same month already exists
+  const idx = snapshots.findIndex(s => s.monthKey === monthKey);
+  if (idx >= 0) snapshots[idx] = snap;
+  else snapshots.unshift(snap);
+  // Keep last 24 months
+  if (snapshots.length > 24) snapshots = snapshots.slice(0, 24);
+  try { localStorage.setItem('aiSnapshots', JSON.stringify(snapshots)); } catch(e) {}
+  renderLatestSnapshot();
+  // Save to Azure
+  try {
+    const account = CONFIG.storageAccount;
+    const table = CONFIG.tableName;
+    const date = new Date().toUTCString();
+    const url = 'https://' + account + '.table.core.windows.net/' + table + '(PartitionKey=\'snapshots\',RowKey=\'history\')';
+    const body = JSON.stringify({ PartitionKey: 'snapshots', RowKey: 'history', Data: JSON.stringify(snapshots) });
+    const auth = await buildSharedKeyAuth('MERGE', date, 'application/json', url);
+    const res = await fetch(url, { method: 'MERGE', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth, 'If-Match': '*' }, body });
+    if (res.status === 404) {
+      const auth2 = await buildSharedKeyAuth('PUT', date, 'application/json', url);
+      await fetch(url, { method: 'PUT', headers: { 'x-ms-date': date, 'x-ms-version': '2021-08-06', 'Content-Type': 'application/json', 'Accept': 'application/json;odata=nometadata', 'Authorization': auth2 }, body });
+    }
+  } catch(e) { console.error('Snapshot save failed:', e); }
+  if (!auto) showToast('Snapshot captured for ' + snap.date);
+}
+
+function renderLatestSnapshot() {
+  const pills = document.getElementById('snapshotPills');
+  if (!pills || snapshots.length === 0) return;
+  const s = snapshots[0];
+  pills.innerHTML =
+    '<span class="snapshot-pill"><strong>' + s.date + '</strong></span>' +
+    '<span class="snapshot-pill"><strong>' + s.depts + '</strong> depts</span>' +
+    '<span class="snapshot-pill"><strong>' + s.total + '</strong> initiatives</span>' +
+    '<span class="snapshot-pill"><strong>' + s.active + '</strong> active</span>' +
+    '<span class="snapshot-pill"><strong>' + s.complete + '</strong> complete</span>';
+}
+
+function openSnapshotHistory() {
+  const list = document.getElementById('snapshotHistoryList');
+  if (snapshots.length === 0) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:13px">No snapshots yet. Click Capture Now to take your first one.</p>';
+  } else {
+    list.innerHTML = snapshots.map(s => '<div class="snapshot-entry">' +
+      '<div class="snapshot-entry-date">' + s.date + (s.auto ? ' <span style="font-size:10px;color:var(--muted);font-weight:400">(auto)</span>' : '') + '</div>' +
+      '<div class="snapshot-entry-pills">' +
+        '<span class="snapshot-entry-pill"><strong>' + s.depts + '</strong> departments</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.total + '</strong> total initiatives</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.active + '</strong> active</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.inProgress + '</strong> in progress</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.planned + '</strong> planned</span>' +
+        '<span class="snapshot-entry-pill"><strong>' + s.complete + '</strong> complete</span>' +
+      '</div></div>'
+    ).join('');
+  }
+  document.getElementById('snapshotModal').classList.add('open');
+}
 
 // ── LICENSE MANAGEMENT ──
 let licenses = { claude: 35, copilot: 64, lovable: 2, gemini: 0, chatgpt: 0 };
